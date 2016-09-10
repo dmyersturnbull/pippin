@@ -1,2 +1,3 @@
-# kokel-data
-Relational database for Kokel zebrafish behavioral data
+# kokel-utils
+Public Scala utilities to be shared across projects in the Kokel Lab.
+The plan is to publish this project on Bintray.
