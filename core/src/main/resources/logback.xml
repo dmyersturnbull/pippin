@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <turboFilter class="ch.qos.logback.classic.turbo.RestrictedDuplicateMessageFilter">
+    </turboFilter>
+    <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <root level="WARN">
+        <appender-ref ref="STDERR" />
+    </root>
+    <logger name="kokellab" level="INFO" />
+</configuration>
