@@ -10,6 +10,18 @@ lazy val commonSettings = Seq(
 	test in assembly := {},
 	assemblyJarName in assembly := name.value + ".jar",
 	target in assembly := file("target"),
+	libraryDependencies ++= Seq(
+		"com.typesafe" % "config" % "1.3.0",
+		"com.jsuereth" %% "scala-arm" % "1.4",
+		"com.google.guava" % "guava" % "19.0",
+		"org.slf4j" % "slf4j-api" % "1.7.21",
+		"com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",
+		"ch.qos.logback" %  "logback-classic" % "1.1.7",
+		"org.mockito" % "mockito-core" % "2.0.101-beta" % "test",
+		"org.scalatest" %% "scalatest" % "3.0.0" % "test",
+		"org.scalactic" %% "scalactic" % "3.0.0" % "test",
+		"org.scalacheck" %% "scalacheck" % "1.12.5" % "test"
+	),
 	pomExtra :=
 			<url>https://github.com/dmyersturnbull/kokel-utils</url>
 					<scm>
@@ -51,4 +63,4 @@ lazy val misc = project.
 
 lazy val root = (project in file(".")).
 		settings(commonSettings: _*).
-		aggregate(core, core, db_load)
+		aggregate(core, chem, webservices, math, misc)

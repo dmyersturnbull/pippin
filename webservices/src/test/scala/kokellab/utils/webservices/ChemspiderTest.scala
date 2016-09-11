@@ -1,4 +1,4 @@
-package kokellab.utils
+package kokellab.utils.webservices
 
 import org.scalacheck.Gen
 import org.scalatest.prop.PropertyChecks

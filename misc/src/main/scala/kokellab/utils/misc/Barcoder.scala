@@ -1,4 +1,4 @@
-package kokellab.utils
+package kokellab.utils.misc
 
 import java.io.{FileOutputStream, OutputStream, FileInputStream}
 import java.nio.file.Path

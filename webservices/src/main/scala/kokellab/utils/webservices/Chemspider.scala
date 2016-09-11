@@ -1,28 +1,35 @@
-package kokellab.utils
+package kokellab.utils.webservices
 
 import com.chemspider.www.MassSpecAPIStub.{ArrayOfInt, GetExtendedCompoundInfoArray}
 import com.chemspider.www.{MassSpecAPIStub, SearchStub}
 import com.typesafe.scalalogging.LazyLogging
 import java.io.IOException
-import kokellab.db.config
-
-import kokellab.ServiceFailedException
+import kokellab.utils.core.exceptions.ServiceFailedException
+import kokellab.utils.core.parseConfig
 
 import scala.xml.XML
+
+import com.typesafe.config.{Config, ConfigFactory, ConfigParseOptions}
+
+import java.io.IOException
+
+import com.chemspider.www.MassSpecAPIStub.{ArrayOfInt, GetExtendedCompoundInfoArray}
+import com.chemspider.www.{MassSpecAPIStub, SearchStub}
+import com.typesafe.scalalogging.LazyLogging
+import kokellab.utils.core.exceptions.ServiceFailedException
+import kokellab.utils.core.parseConfig
 
 /**
   * Please note that using SMILESToInChI returns only a single, arbitrary steroisomer, at least if the sterocenters are not defined in the SMILES.
   * However, the mass spec API does not suffer from this issue.
   */
-class Chemspider(token: String = config.getString("chemspiderToken")) extends LazyLogging {
+class Chemspider(token: String = parseConfig("config/app.properties").getString("chemspiderToken")) extends LazyLogging {
 
-	def csidToMoles(csid: Int) = {
-		try {
-			val xml = XML.load(s"http://www.chemspider.com/InChI.asmx/CSIDToMol?csid=$csid&token=$token")
-			xml.text
-		} catch {
-			case e: IOException => throw new ServiceFailedException(s"Could fetch molecule for $csid", e)
-		}
+	def csidToMoles(csid: Int) =  try {
+		val xml = XML.load(s"http://www.chemspider.com/InChI.asmx/CSIDToMol?csid=$csid&token=$token")
+		xml.text
+	} catch {
+		case e: IOException => throw new ServiceFailedException(s"Could fetch molecule for $csid", e)
 	}
 
 	def fetchBasicInfo(id: Int): BasicChemspiderInfo = {
@@ -53,5 +60,6 @@ class Chemspider(token: String = config.getString("chemspiderToken")) extends La
 	}
 
 }
+
 
 case class BasicChemspiderInfo(chemspiderId: Int, inchi: String, inchikey: String, smiles: String, commonName: String, molWeight: Float)

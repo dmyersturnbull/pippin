@@ -1,4 +1,4 @@
-package kokellab
+package kokellab.utils
 
 import java.io.{File, FileInputStream, InputStreamReader}
 import java.sql.Timestamp
@@ -6,18 +6,16 @@ import java.util.Calendar
 import java.util.zip.GZIPInputStream
 
 import com.github.tototoshi.csv.{CSVReader, CSVWriter}
-import com.typesafe.config.{ConfigFactory, ConfigParseOptions}
+import com.typesafe.config.{Config, ConfigFactory, ConfigParseOptions}
 import com.typesafe.scalalogging.LazyLogging
 import resource._
 
-import scala.collection.JavaConversions._
-import scala.concurrent.Await
-import scala.concurrent.duration._
 import scala.io.Source
 
-package object db extends LazyLogging {
+package object core extends LazyLogging {
 
-	def parseConfig(path: File): Config = 
+	def parseConfig(path: String): Config = parseConfig(new File(path))
+	def parseConfig(path: File): Config =
 		ConfigFactory.parseFile(path, ConfigParseOptions.defaults().setAllowMissing(false))
 
 	def timestamp() = new Timestamp(Calendar.getInstance().getTime.getTime)
