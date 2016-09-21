@@ -1,7 +1,6 @@
 name := "kokel-utils-chem"
 // depressingly, CDK uses log4j directly; also, I don't know which of these I need
 libraryDependencies ++= Seq(
-	"org.apache.jena" % "apache-jena-libs" % "3.1.0",
 	"org.openscience.cdk" % "cdk-standard" % "1.5.13",
 	"org.openscience.cdk" % "cdk-interfaces" % "1.5.13",
 	"org.openscience.cdk" % "cdk-core" % "1.5.13",
