@@ -2,7 +2,7 @@ name := "kokel-utils"
 
 lazy val commonSettings = Seq(
 	organization := "com.github.dmyersturnbull",
-	version := "0.0.1",
+	version := "0.1.0-SNAPSHOT",
 	scalaVersion := "2.11.8",
 	javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:all"),
 	scalacOptions ++= Seq("-unchecked", "-deprecation"),
@@ -46,6 +46,10 @@ lazy val commonSettings = Seq(
 lazy val core = project.
 		settings(commonSettings: _*)
 
+lazy val logconfig = project.
+		settings(commonSettings: _*).
+		dependsOn(core)
+
 lazy val chem = project.
 		settings(commonSettings: _*).
 		dependsOn(core)
@@ -64,4 +68,4 @@ lazy val misc = project.
 
 lazy val root = (project in file(".")).
 		settings(commonSettings: _*).
-		aggregate(core, chem, webservices, math, misc)
+		aggregate(core, logconfig, chem, webservices, math, misc)
