@@ -1,0 +1,30 @@
+# General
+.*
+~*
+*.so
+*.log
+*.tar
+*.tar.gz
+*.zip
+*.bz2
+cache/
+out/
+*.junk
+
+# Database
+config/
+
+# Scala and Java
+*.class
+hs_err_pid*
+
+# SBT
+dist/*
+target/
+*/target/
+lib_managed/
+src_managed
+project/boot
+project/plugins/project
+
+!.gitignore
