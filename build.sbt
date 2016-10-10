@@ -2,7 +2,7 @@ name := "kokel-utils"
 
 lazy val commonSettings = Seq(
 	organization := "com.github.dmyersturnbull",
-	version := "0.1.0-SNAPSHOT",
+	version := "0.1.1-SNAPSHOT",
 	scalaVersion := "2.11.8",
 	javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:all"),
 	scalacOptions ++= Seq("-unchecked", "-deprecation"),

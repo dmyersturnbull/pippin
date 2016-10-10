@@ -33,17 +33,21 @@ class Chemspider(token: String = parseConfig("config/app.properties").getString(
 	}
 
 	def fetchBasicInfo(id: Int): BasicChemspiderInfo = {
+
+		// this is the worst API I've ever seen
 		val stupidArray = new ArrayOfInt
 		stupidArray.set_int(Array(id))
 		val info = new GetExtendedCompoundInfoArray
 		info.setCSIDs(stupidArray)
 		info.setToken(token)
+
 		val results = new MassSpecAPIStub().getExtendedCompoundInfoArray(info).getGetExtendedCompoundInfoArrayResult.getExtendedCompoundInfo
 		if (results.length > 1) throw new ServiceFailedException(s"Ambiguous ChemSpider ID $id; got ${results.length} results")
 		if (results.length < 1) throw new ServiceFailedException(s"No results for ChemSpider ID $id")
+
 		val r = results.head
 		assert(id == r.getCSID)
-		new BasicChemspiderInfo(r.getCSID, r.getInChI, r.getInChIKey, r.getSMILES, r.getCommonName, r.getMolecularWeight.toFloat)
+		BasicChemspiderInfo(r.getCSID, r.getInChI, r.getInChIKey, r.getSMILES, r.getCommonName, r.getMolecularWeight.toFloat)
 	}
 
 	def fetchChemspiderIds(smiles: String): Seq[Int] = {
@@ -52,6 +56,7 @@ class Chemspider(token: String = parseConfig("config/app.properties").getString(
 		search.setToken(token)
 		new SearchStub().simpleSearch(search).getSimpleSearchResult.get_int()
 	}
+
 	def fetchUniqueChemspiderId(smiles: String): Int = {
 		val results = fetchChemspiderIds(smiles)
 		if (results.length > 1) throw new ServiceFailedException(s"Ambiguous smiles string $smiles; got ${results.length} ChemSpider IDs")
@@ -60,6 +65,5 @@ class Chemspider(token: String = parseConfig("config/app.properties").getString(
 	}
 
 }
-
 
 case class BasicChemspiderInfo(chemspiderId: Int, inchi: String, inchikey: String, smiles: String, commonName: String, molWeight: Float)

@@ -1,4 +1,4 @@
-package kokellab.utils
+package kokellab.utils.chem
 
 import org.openscience.cdk.DefaultChemObjectBuilder
 import org.openscience.cdk.inchi.{InChIToStructure, InChIGeneratorFactory}
