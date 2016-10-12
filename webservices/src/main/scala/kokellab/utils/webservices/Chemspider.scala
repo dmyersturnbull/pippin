@@ -1,15 +1,8 @@
 package kokellab.utils.webservices
 
-import com.chemspider.www.MassSpecAPIStub.{ArrayOfInt, GetExtendedCompoundInfoArray}
-import com.chemspider.www.{MassSpecAPIStub, SearchStub}
-import com.typesafe.scalalogging.LazyLogging
-import java.io.IOException
-import kokellab.utils.core.exceptions.ServiceFailedException
-import kokellab.utils.core.parseConfig
+import scala.util.{Try, Success, Failure}
 
 import scala.xml.XML
-
-import com.typesafe.config.{Config, ConfigFactory, ConfigParseOptions}
 
 import java.io.IOException
 
@@ -25,42 +18,64 @@ import kokellab.utils.core.parseConfig
   */
 class Chemspider(token: String = parseConfig("config/app.properties").getString("chemspiderToken")) extends LazyLogging {
 
-	def csidToMoles(csid: Int) =  try {
-		val xml = XML.load(s"http://www.chemspider.com/InChI.asmx/CSIDToMol?csid=$csid&token=$token")
+	/**
+	  * @return The text of the mol file
+	  */
+	def csidToMoles(chemspiderId: Int): String =  try {
+		val xml = XML.load(s"http://www.chemspider.com/InChI.asmx/CSIDToMol?csid=$chemspiderId&token=$token")
 		xml.text
 	} catch {
-		case e: IOException => throw new ServiceFailedException(s"Could fetch molecule for $csid", e)
+		case e: IOException => throw new ServiceFailedException(s"Could fetch molecule for $chemspiderId", e)
 	}
 
-	def fetchBasicInfo(id: Int): BasicChemspiderInfo = {
+	/**
+	  * @throws ServiceFailedException If the query was not found
+	  */
+	def fetchBasicInfo(chemspiderId: Int): BasicChemspiderInfo = {
 
 		// this is the worst API I've ever seen
 		val stupidArray = new ArrayOfInt
-		stupidArray.set_int(Array(id))
+		stupidArray.set_int(Array(chemspiderId))
 		val info = new GetExtendedCompoundInfoArray
 		info.setCSIDs(stupidArray)
 		info.setToken(token)
 
-		val results = new MassSpecAPIStub().getExtendedCompoundInfoArray(info).getGetExtendedCompoundInfoArrayResult.getExtendedCompoundInfo
-		if (results.length > 1) throw new ServiceFailedException(s"Ambiguous ChemSpider ID $id; got ${results.length} results")
-		if (results.length < 1) throw new ServiceFailedException(s"No results for ChemSpider ID $id")
+		val attempt = Try(new MassSpecAPIStub().getExtendedCompoundInfoArray(info).getGetExtendedCompoundInfoArrayResult.getExtendedCompoundInfo)
+		attempt match {
+			case Success(results) =>
 
-		val r = results.head
-		assert(id == r.getCSID)
-		BasicChemspiderInfo(r.getCSID, r.getInChI, r.getInChIKey, r.getSMILES, r.getCommonName, r.getMolecularWeight.toFloat)
+				if (results.length > 1) throw new ServiceFailedException(s"Ambiguous ChemSpider ID $chemspiderId; got ${results.length} results")
+				if (results.length < 1) throw new ServiceFailedException(s"No results for ChemSpider ID $chemspiderId")
+
+				val r = results.head
+				assert(chemspiderId == r.getCSID)
+				BasicChemspiderInfo(r.getCSID, r.getInChI, r.getInChIKey, r.getSMILES, r.getCommonName, r.getMolecularWeight.toFloat)
+			case Failure(e) =>
+				throw new ServiceFailedException(s"No results for ChemSpider ID $chemspiderId")
+		}
 	}
 
-	def fetchChemspiderIds(smiles: String): Seq[Int] = {
+	/**
+	  * @param query A name, a SMILES string, a chemical formula, an inchi key, or an inchi string
+	  * @return All ChemSpider IDs found
+	  */
+	def fetchChemspiderIds(query: String): Seq[Int] = {
 		val search = new SearchStub.SimpleSearch()
-		search.setQuery(smiles)
+		search.setQuery(query)
 		search.setToken(token)
-		new SearchStub().simpleSearch(search).getSimpleSearchResult.get_int()
+		val results = new SearchStub().simpleSearch(search).getSimpleSearchResult.get_int()
+		if (results == null) Seq.empty[Int]
+		else results
 	}
 
-	def fetchUniqueChemspiderId(smiles: String): Int = {
-		val results = fetchChemspiderIds(smiles)
-		if (results.length > 1) throw new ServiceFailedException(s"Ambiguous smiles string $smiles; got ${results.length} ChemSpider IDs")
-		if (results.length < 1) throw new ServiceFailedException(s"No ChemSpider IDs for smiles string $smiles")
+	/**
+	  * @param query A name, a SMILES string, a chemical formula, an inchi key, or an inchi string
+	  * @throws ServiceFailedException If the query was not found, or returned multiple matches
+	  */
+	def fetchUniqueChemspiderId(query: String): Int = {
+		val results = fetchChemspiderIds(query)
+		if (results.length > 1) throw new ServiceFailedException(s"Ambiguous smiles string $query; got ${results.length} ChemSpider IDs")
+		if (results.length < 1) throw new ServiceFailedException(s"No ChemSpider IDs for smiles string $query")
 		results.head
 	}
 

@@ -21,4 +21,14 @@ class ChemspiderTest extends PropSpec with PropertyChecks with Matchers {
 		}
 	}
 
+	def nullTest() = {
+		val spider = new Chemspider
+		val smilesGen = Gen.oneOf("C[C@@H]sadgasdfgasgsag", "CC(=O)asdgasdgasdg")
+		property(s"Should return an empty sequence") {
+			forAll(smilesGen) { (smiles: String) =>
+				spider.fetchChemspiderIds(smiles) should equal(null)
+			}
+		}
+	}
+
 }
