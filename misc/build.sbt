@@ -1,6 +1,6 @@
-name := "kokel-utils-misc"
+name := "kl-common-scala-misc"
 libraryDependencies ++= Seq(
 	"com.google.zxing" % "core" % "3.2.1",
 	"com.google.zxing" % "javase" % "3.2.1"
 )
-assemblyJarName in assembly := "kokel-utils-misc.jar"
+assemblyJarName in assembly := "kl-common-scala-misc.jar"

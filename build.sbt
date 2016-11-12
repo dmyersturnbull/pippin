@@ -1,4 +1,4 @@
-name := "kokel-utils"
+name := "kl-common-scala"
 
 lazy val commonSettings = Seq(
 	organization := "com.github.dmyersturnbull",
@@ -16,18 +16,20 @@ lazy val commonSettings = Seq(
 		"com.google.guava" % "guava" % "19.0",
 		"com.google.code.findbugs" % "jsr305" % "3.0.1", // to work around compiler warnings about missing anotations from Guava
 		"org.slf4j" % "slf4j-api" % "1.7.21",
-		"com.typesafe.scala-logging" %% "scala-logging" % "3.4.0",
+		"com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
 		"ch.qos.logback" %  "logback-classic" % "1.1.7",
-		"org.mockito" % "mockito-core" % "2.0.101-beta" % "test",
-		"org.scalatest" %% "scalatest" % "3.0.0" % "test",
-		"org.scalactic" %% "scalactic" % "3.0.0" % "test",
-		"org.scalacheck" %% "scalacheck" % "1.12.5" % "test"
+		"org.specs2" %% "specs2-core" % "3.8.6" % "test",
+		"org.specs2" %% "specs2-scalacheck" % "3.8.6" % "test",
+		"org.specs2" %% "specs2-mock" % "3.8.6" % "test",
+		"org.scalacheck" %% "scalacheck" % "1.13.4" % "test",
+		"org.mockito" % "mockito-core" % "2.2.15" % "test"
+
 	),
 	pomExtra :=
-			<url>https://github.com/dmyersturnbull/kokel-utils</url>
+			<url>https://github.com/dmyersturnbull/kl-common-scala</url>
 					<scm>
-						<url>https://github.com/dmyersturnbull/kokel-utils</url>
-						<connection>https://github.com/dmyersturnbull/kokel-utils.git</connection>
+						<url>https://github.com/dmyersturnbull/kl-common-scala</url>
+						<connection>https://github.com/dmyersturnbull/kl-common-scala.git</connection>
 					</scm>
 					<developers>
 						<developer>
@@ -39,7 +41,7 @@ lazy val commonSettings = Seq(
 					</developers>
 					<issueManagement>
 						<system>Github</system>
-						<url>https://github.com/dmyersturnbull/kokel-utils/issues</url>
+						<url>https://github.com/dmyersturnbull/kl-common-scala/issues</url>
 					</issueManagement>
 )
 

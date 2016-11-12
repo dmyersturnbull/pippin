@@ -29,7 +29,7 @@ class Chemspider(token: String = parseConfig("config/app.properties").getString(
 	}
 
 	/**
-	  * @throws ServiceFailedException If the query was not found
+	  * @throws kokellab.utils.core.exceptions.ServiceFailedException If the query was not found
 	  */
 	def fetchBasicInfo(chemspiderId: Int): BasicChemspiderInfo = {
 
@@ -70,7 +70,7 @@ class Chemspider(token: String = parseConfig("config/app.properties").getString(
 
 	/**
 	  * @param query A name, a SMILES string, a chemical formula, an inchi key, or an inchi string
-	  * @throws ServiceFailedException If the query was not found, or returned multiple matches
+	  * @throws kokellab.utils.core.exceptions.ServiceFailedException If the query was not found, or returned multiple matches
 	  */
 	def fetchUniqueChemspiderId(query: String): Int = {
 		val results = fetchChemspiderIds(query)

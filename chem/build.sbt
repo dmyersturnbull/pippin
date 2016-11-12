@@ -1,4 +1,4 @@
-name := "kokel-utils-chem"
+name := "kl-common-scala-chem"
 // depressingly, CDK uses log4j directly; also, I don't know which of these I need
 libraryDependencies ++= Seq(
 	"org.openscience.cdk" % "cdk-standard" % "1.5.13",
@@ -15,4 +15,4 @@ libraryDependencies ++= Seq(
 	"org.openscience.cdk" % "cdk-extra" % "1.5.13",
 	"org.openscience.cdk" % "cdk-charges" % "1.5.13"
 ) map (_.exclude("xml-apis", "xml-apis"))
-assemblyJarName in assembly := "kokel-utils-chem.jar"
+assemblyJarName in assembly := "kl-common-scala-chem.jar"
