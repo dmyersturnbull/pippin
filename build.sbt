@@ -13,17 +13,15 @@ lazy val commonSettings = Seq(
 	libraryDependencies ++= Seq(
 		"com.typesafe" % "config" % "1.3.0",
 		"com.jsuereth" %% "scala-arm" % "1.4",
-		"com.google.guava" % "guava" % "19.0",
-		"com.google.code.findbugs" % "jsr305" % "3.0.1", // to work around compiler warnings about missing anotations from Guava
+		"com.google.guava" % "guava" % "20.0",
+		"com.google.code.findbugs" % "jsr305" % "3.0.1", // to work around compiler warnings about missing annotations from Guava
 		"org.slf4j" % "slf4j-api" % "1.7.21",
 		"com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
 		"ch.qos.logback" %  "logback-classic" % "1.1.7",
-		"org.specs2" %% "specs2-core" % "3.8.6" % "test",
-		"org.specs2" %% "specs2-scalacheck" % "3.8.6" % "test",
-		"org.specs2" %% "specs2-mock" % "3.8.6" % "test",
-		"org.scalacheck" %% "scalacheck" % "1.13.4" % "test",
-		"org.mockito" % "mockito-core" % "2.2.15" % "test"
-
+		"org.scalatest" %% "scalatest" % "3.0.0" % "test",
+		"org.scalactic" %% "scalactic" % "3.0.0" % "test",
+		"org.scalacheck" %% "scalacheck" % "1.12.6" % "test",
+		"org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % "test"
 	),
 	pomExtra :=
 			<url>https://github.com/dmyersturnbull/kl-common-scala</url>
@@ -64,10 +62,14 @@ lazy val math = project.
 		settings(commonSettings: _*).
 		dependsOn(core)
 
+lazy val grammers = project.
+		settings(commonSettings: _*).
+		dependsOn(core)
+
 lazy val misc = project.
 		settings(commonSettings: _*).
 		dependsOn(core)
 
 lazy val root = (project in file(".")).
 		settings(commonSettings: _*).
-		aggregate(core, logconfig, chem, webservices, math, misc)
+		aggregate(core, logconfig, chem, webservices, math, grammers, misc)
