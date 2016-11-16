@@ -1,7 +1,11 @@
 package kokellab.utils
 
 import java.io.File
+import java.security.MessageDigest
+import java.sql.Blob
+import javax.sql.rowset.serial.SerialBlob
 
+import com.google.common.io.{BaseEncoding, ByteStreams}
 import com.typesafe.config.{Config, ConfigException, ConfigFactory, ConfigParseOptions}
 import com.typesafe.scalalogging.LazyLogging
 
@@ -31,6 +35,15 @@ package object core extends LazyLogging {
 				logger.error(errorMessage)
 				throw e
 		}
+
+	val sha1 = MessageDigest.getInstance("SHA-1")
+	def bytesToHash(bytes: Traversable[Byte]): Array[Byte] = sha1.digest(bytes.toArray)
+	def blobToBytes(blob: Blob): Array[Byte] = ByteStreams.toByteArray(blob.getBinaryStream)
+	def bytesToHex(bytes: Traversable[Byte]) = BaseEncoding.base16().lowerCase.encode(bytes.toArray)
+	def blobToHex(blob: Blob) = BaseEncoding.base16().lowerCase().encode(blobToBytes(blob))
+	def bytesToBlob(bytes: Traversable[Byte]): Blob = new SerialBlob(bytes.toArray)
+	def bytesToHashBlob(bytes: Traversable[Byte]): Blob = bytesToBlob(bytesToHash(bytes))
+	def bytesToHashHex(bytes: Traversable[Byte]) = bytesToHex(bytesToHash(bytes))
 
 	/**
 		* Looks up all of the given keys in the map.
