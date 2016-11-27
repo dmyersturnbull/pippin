@@ -4,11 +4,13 @@ import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 
 import com.google.zxing.BarcodeFormat
 import org.scalacheck.Gen
-import org.scalacheck.Prop.BooleanOperators
 import org.scalatest.prop.{GeneratorDrivenPropertyChecks, PropertyChecks}
 import org.scalatest.{Matchers, PropSpec}
 
 class BarcoderTest extends PropSpec with GeneratorDrivenPropertyChecks with Matchers {
+
+		def fakeEncodeDecode(text: String, barcodeFormat: BarcodeFormat, dimensions: (Int, Int), imageFormat: String): String =
+			if (text.isEmpty) text else encodeDecode(text.toUpperCase, barcodeFormat, dimensions, imageFormat)
 
 		def genBoundedList[T](maxSize: Int, gen: Gen[T]): Gen[List[T]] =
 			Gen.choose(0, maxSize) flatMap (size => Gen.listOfN(size, gen))
@@ -28,7 +30,7 @@ class BarcoderTest extends PropSpec with GeneratorDrivenPropertyChecks with Matc
 		def test(barcodeFormat: BarcodeFormat, dimensionsGen: Gen[(Int, Int)], stringGen: Gen[String]) = {
 			property(s"Decoding an encoded string should yield the original string for ${barcodeFormat.name} codes") {
 				forAll(imageFormatGen, stringGen, dimensionsGen) { (imageFormat: String, text: String, dimensions: (Int, Int)) =>
-					(!text.trim.isEmpty) ==> (encodeDecode(text.toUpperCase, barcodeFormat, dimensions, imageFormat) == text.toUpperCase)
+					fakeEncodeDecode(text, barcodeFormat, dimensions, imageFormat) should equal (text.toUpperCase)
 				}
 			}
 		}
@@ -46,7 +48,8 @@ class BarcoderTest extends PropSpec with GeneratorDrivenPropertyChecks with Matc
 		test(BarcodeFormat.CODE_39, rectangularGen, code39And93Gen)
 		test(BarcodeFormat.CODE_93, rectangularGen, code39And93Gen)
 
-		test(BarcodeFormat.CODE_128, rectangularGen, genBoundedString(48, Gen.choose[Char](0, 127)))
+		// this fails due to https://github.com/zxing/zxing/issues/716
+		test(BarcodeFormat.CODE_128, rectangularGen, genBoundedString(48, Gen.choose[Char](0x20, 127)))
 
 		test(BarcodeFormat.QR_CODE, squareGen, genBoundedString(4296, Gen.frequency((36, Gen.alphaNumChar), (8, Gen.oneOf('-', '.', '$', '/', '+', '%', ' ', ':')))))
 

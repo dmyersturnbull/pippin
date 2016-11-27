@@ -1,6 +1,7 @@
 package kokellab.utils
 
 import java.io.File
+import java.nio.ByteBuffer
 import java.security.MessageDigest
 import java.sql.Blob
 import javax.sql.rowset.serial.SerialBlob
@@ -44,6 +45,21 @@ package object core extends LazyLogging {
 	def bytesToBlob(bytes: Traversable[Byte]): Blob = new SerialBlob(bytes.toArray)
 	def bytesToHashBlob(bytes: Traversable[Byte]): Blob = bytesToBlob(bytesToHash(bytes))
 	def bytesToHashHex(bytes: Traversable[Byte]) = bytesToHex(bytesToHash(bytes))
+
+	def floatsToBytes(values: Traversable[Float]): Traversable[Byte] =
+		values flatMap (value => ByteBuffer.allocate(4).putFloat(value).array())
+
+	def doublesToBytes(values: Traversable[Double]): Traversable[Byte] =
+		values flatMap (value => ByteBuffer.allocate(8).putDouble(value).array())
+
+	def intsToBytes(values: Traversable[Int]): Traversable[Byte] =
+		values flatMap (value => ByteBuffer.allocate(4).putInt(value).array())
+
+	def shortsToBytes(values: Traversable[Short]): Traversable[Byte] =
+		values flatMap (value => ByteBuffer.allocate(2).putShort(value).array())
+
+	def longsToBytes(values: Traversable[Long]): Traversable[Byte] =
+		values flatMap (value => ByteBuffer.allocate(8).putLong(value).array())
 
 	/**
 		* Looks up all of the given keys in the map.
