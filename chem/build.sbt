@@ -15,4 +15,3 @@ libraryDependencies ++= Seq(
 	"org.openscience.cdk" % "cdk-extra" % "1.5.13",
 	"org.openscience.cdk" % "cdk-charges" % "1.5.13"
 ) map (_.exclude("xml-apis", "xml-apis"))
-assemblyJarName in assembly := "kl-common-scala-chem.jar"

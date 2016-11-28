@@ -9,4 +9,3 @@ libraryDependencies ++= Seq(
 	"org.apache.ws.commons.axiom" % "axiom-api" % "1.2.19", // apparently needed for ChemSpider API,
 	"org.apache.ws.commons.axiom" % "axiom-impl" % "1.2.19" // apparently needed for ChemSpider API,
 )// map (_.exclude("org.apache.ws.commons.axiom", "axiom-impl"))
-assemblyJarName in assembly := "kl-common-scala-webservices.jar"

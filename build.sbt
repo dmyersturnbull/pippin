@@ -1,15 +1,21 @@
 name := "kl-common-scala"
 
+description := "Common Scala utilities for the Kokel Lab"
+
 lazy val commonSettings = Seq(
-	organization := "com.github.dmyersturnbull",
+	organization := "com.github.kokellab",
+	organizationHomepage := Some(url("https://github.com/kokellab")),
 	version := "0.1.1-SNAPSHOT",
+	isSnapshot := true,
 	scalaVersion := "2.11.8",
 	javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:all"),
 	scalacOptions ++= Seq("-unchecked", "-deprecation"),
 	testOptions in Test += Tests.Argument("-oF"),
-	test in assembly := {},
-	assemblyJarName in assembly := name.value + ".jar",
-	target in assembly := file("target"),
+	homepage := Some(url("https://github.com/kokellab/kl-common-scala")),
+	licenses := Seq("Apache Software License, Version 2.0"  -> url("https://www.apache.org/licenses/LICENSE-2.0")),
+	developers := List(Developer("dmyersturnbull", "Douglas Myers-Turnbull", "dmyersturnbull@kokellab.com", url("https://github.com/dmyersturnbull"))),
+	startYear := Some(2016),
+	scmInfo := Some(ScmInfo(url("https://github.com/kokellab/kl-common-scala"), "https://github.com/kokellab/kl-common-scala.git")),
 	libraryDependencies ++= Seq(
 		"com.typesafe" % "config" % "1.3.0",
 		"com.jsuereth" %% "scala-arm" % "1.4",
@@ -24,23 +30,10 @@ lazy val commonSettings = Seq(
 		"org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % "test"
 	),
 	pomExtra :=
-			<url>https://github.com/dmyersturnbull/kl-common-scala</url>
-					<scm>
-						<url>https://github.com/dmyersturnbull/kl-common-scala</url>
-						<connection>https://github.com/dmyersturnbull/kl-common-scala.git</connection>
-					</scm>
-					<developers>
-						<developer>
-							<id>dmyersturnbull</id>
-							<name>Douglas Myers-Turnbull</name>
-							<url>https://www.dmyersturnbull.com</url>
-							<timezone>-8</timezone>
-						</developer>
-					</developers>
-					<issueManagement>
-						<system>Github</system>
-						<url>https://github.com/dmyersturnbull/kl-common-scala/issues</url>
-					</issueManagement>
+		<issueManagement>
+			<system>Github</system>
+			<url>https://github.com/kokellab/kl-common-scala/issues</url>
+		</issueManagement>
 )
 
 lazy val core = project.
