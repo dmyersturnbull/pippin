@@ -1,5 +1,5 @@
 # kl-common-scala
-Public Scala utilities to be shared across projects in the [Kokel Lab](kokellab.com).
+Public Scala utilities to be shared across projects in the [Kokel Lab](https://kokellab.com).
 
 ## organization
 
@@ -12,7 +12,7 @@ Public Scala utilities to be shared across projects in the [Kokel Lab](kokellab.
 
 ## building
 
-This will eventually be published on [Bintray](https://bintray.com/). In the meantime, to build this for dependencies to use, run:
+This will soon be published on [Maven Central](https://maven.org). In the meantime, to build this for dependencies to use, run:
 
 ```
 sbt publish-local
@@ -23,7 +23,7 @@ This will publish all of these subprojects to your local [Ivy](https://ant.apach
 To import the published _core_ artifact, add this to your SBT dependencies:
 
 ```
-com.github.dmyersturnbull" %% "kokel-utils-core" % "0.0.1
+com.github.kokellab" %% "kl-common-scala" % "0.1.1-SNAPSHOT"
 ```
 
 ## license
