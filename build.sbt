@@ -8,6 +8,14 @@ lazy val commonSettings = Seq(
 	version := "0.1.1-SNAPSHOT",
 	isSnapshot := true,
 	scalaVersion := "2.11.8",
+	publishMavenStyle := true,
+	publishTo :=
+		Some(if (isSnapshot.value)
+			"Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+			else "Sonatype Releases"  at "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+		),
+	publishArtifact in Test := false,
+	pomIncludeRepository := { _ => false },
 	javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:all"),
 	scalacOptions ++= Seq("-unchecked", "-deprecation"),
 	testOptions in Test += Tests.Argument("-oF"),
