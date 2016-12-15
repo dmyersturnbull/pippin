@@ -13,13 +13,13 @@ object TextUtils {
 	/**
 		* Converts a string representation of an integer to a signed byte <em>minus 128</em>.
 		*/
-	def signByte(string: String): Byte = (pint(string) - 128).toByte
+	def signByte(string: String): Byte = (pint(string) - 128).toString.toByte
 
 	/**
 		* Parses a string to an int but stripping out any decimal points that are 0
 		*/
 	def pint(s: String): Int =
-	if (s.contains('.')) s.substring(0, s.lastIndexOf('.')).toInt else s.toInt
+		new java.math.BigDecimal(s).stripTrailingZeros.toPlainString.toInt
 
 	/**
 		* Streams a text file, gunzipping if the filename ends with ".gz".
