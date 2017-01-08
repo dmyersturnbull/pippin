@@ -1,5 +1,6 @@
 package kokellab.utils
 
+import sys.process._
 import java.io.File
 import java.nio.ByteBuffer
 import java.security.MessageDigest
@@ -46,6 +47,9 @@ package object core extends LazyLogging {
 	def bytesToHashBlob(bytes: Traversable[Byte]): Blob = bytesToBlob(bytesToHash(bytes))
 	def bytesToHashHex(bytes: Traversable[Byte]) = bytesToHex(bytesToHash(bytes))
 
+	def hexToBytes(hex: String): Array[Byte] =
+		hex.sliding(2, 2).toArray.map(Integer.parseInt(_, 16).toByte)
+
 	def floatsToBytes(values: Traversable[Float]): Traversable[Byte] =
 		values flatMap (value => ByteBuffer.allocate(4).putFloat(value).array())
 
@@ -75,5 +79,9 @@ package object core extends LazyLogging {
 	}
 	def uniqueLookup[A, B](keys: Set[A], map: Map[A, B]): B =
 		uniqueLookupOption(keys, map) getOrElse (throw new IllegalArgumentException("No value for keys {${keys.mkString(\",\")}}"))
+
+	def thisGitCommitSha1Hex = ("git rev-parse HEAD" !!).trim
+
+	def thisGitCommitSha1Bytes = hexToBytes(("git rev-parse HEAD" !!).trim)
 
 }
