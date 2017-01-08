@@ -17,7 +17,7 @@ lazy val commonSettings = Seq(
 	publishArtifact in Test := false,
 	pomIncludeRepository := { _ => false },
 	javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:all"),
-	scalacOptions ++= Seq("-unchecked", "-deprecation"),
+	scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-language:postfixOps"),
 	testOptions in Test += Tests.Argument("-oF"),
 	homepage := Some(url("https://github.com/kokellab/kl-common-scala")),
 	licenses := Seq("Apache Software License, Version 2.0"  -> url("https://www.apache.org/licenses/LICENSE-2.0")),
