@@ -34,7 +34,7 @@ package object core extends LazyLogging {
 			fn()
 		} catch {
 			case e: Exception =>
-				logger.error(errorMessage)
+				logger.error(errorMessage, e)
 				throw e
 		}
 
