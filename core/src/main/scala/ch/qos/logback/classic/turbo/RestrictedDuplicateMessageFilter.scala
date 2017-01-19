@@ -14,7 +14,7 @@ import scala.beans.BeanProperty
   * @param nRepetitionsAllowed Permit at most this number of messages with the same format
   * @param cacheSize Store up to this many message formats for comparison; if more message formats are seen than this number, new messages with formats seen previously may be logged despite exceeding the count limit
   */
-class RestrictedDuplicateMessageFilter(@BeanProperty var packagesAlwaysAllowed: String, @BeanProperty var nRepetitionsAllowed: Int = 1, @BeanProperty var cacheSize: Int = 200) extends TurboFilter {
+class RestrictedDuplicateMessageFilter(@BeanProperty var alwaysDebug: Bool, @BeanProperty var packagesAlwaysAllowed: String, @BeanProperty var nRepetitionsAllowed: Int = 1, @BeanProperty var cacheSize: Int = 200) extends TurboFilter {
 
 	private var msgCache: LRUMessageCache = null
 
@@ -45,7 +45,7 @@ class RestrictedDuplicateMessageFilter(@BeanProperty var packagesAlwaysAllowed: 
 	/**
 	  * Defined in org.slf4j.spi.LocationAwareLogger.
 	  */
-	private def slf4jLevel(level: Level): Int = Map(
+	private def slf4jLevel(level: Level): Int = if (alwaysDebug) 10 else Map(
 		Level.TRACE -> 0,
 		Level.DEBUG -> 10,
 		Level.INFO -> 20,
