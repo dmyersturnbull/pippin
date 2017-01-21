@@ -15,7 +15,7 @@ import scala.beans.BeanProperty
   * @param cacheSize Store up to this many message formats for comparison; if more message formats are seen than this number, new messages with formats seen previously may be logged despite exceeding the count limit
   * @param fixedLogLevel Use this SLF4J log level to state that further messages will be ignored; if < 0, the same level as the log message ignored will be used
   */
-class RestrictedDuplicateMessageFilter(@BeanProperty var packagesAlwaysAllowed: String, @BeanProperty var nRepetitionsAllowed: Int = 1, @BeanProperty var cacheSize: Int = 200, @BeanProperty var fixedLogLevel: Bool=-1) extends TurboFilter {
+class RestrictedDuplicateMessageFilter(@BeanProperty var packagesAlwaysAllowed: String, @BeanProperty var nRepetitionsAllowed: Int = 1, @BeanProperty var cacheSize: Int = 200, @BeanProperty var fixedLogLevel: Int = -1) extends TurboFilter {
 
 	private var msgCache: LRUMessageCache = null
 
