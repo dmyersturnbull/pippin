@@ -63,7 +63,7 @@ lazy val math = project.
 		settings(commonSettings: _*).
 		dependsOn(core)
 
-lazy val grammers = project.
+lazy val grammars = project.
 		settings(commonSettings: _*).
 		dependsOn(core)
 
@@ -73,4 +73,4 @@ lazy val misc = project.
 
 lazy val root = (project in file(".")).
 		settings(commonSettings: _*).
-		aggregate(core, logconfig, chem, webservices, math, grammers, misc)
+		aggregate(core, logconfig, chem, webservices, math, grammars, misc)
