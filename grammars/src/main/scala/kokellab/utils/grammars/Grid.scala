@@ -37,8 +37,6 @@ case class AlphanumericGrid(nRows: Int, nColumns: Int) extends GridLike {
 
 }
 
-case class NinetySixWellPlate() extends AlphanumericGrid(8, 12)
-
 trait PointLike {
 	def row: Int
 	def column: Int
