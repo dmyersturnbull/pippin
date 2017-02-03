@@ -3,12 +3,12 @@ Public Scala utilities to be shared across projects in the [Kokel Lab](https://k
 
 ## organization
 
-- _core_ includes general utilities and a Logback configuration, and it's a dependency for the other subprojects.
+- _core_ includes general utilities and a Logback duplicate message filter, and it's a dependency for the other subprojects.
 - _logconfig_ contains a [Logback](http://logback.qos.ch/) configuration that filters duplicate messages.
 - _chem_ contains code for working with [CDK](https://github.com/cdk/cdk).
 - _webservices_ contains code that interact with webservices.
 - _math_ contains code for math, statistics, and machine learning. It's mainly built on [Breeze](https://github.com/scalanlp/breeze).
-- _grammers_ contains formally specified grammers and their parsers.
+- _grammars_ contains formally specified grammars and their parsers.
 
 ## building
 
