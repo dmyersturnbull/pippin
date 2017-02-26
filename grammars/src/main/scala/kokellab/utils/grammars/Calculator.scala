@@ -1,5 +1,5 @@
 
-package kokellab.utils.grammers
+package kokellab.utils.grammars
 
 import org.parboiled2._
 
@@ -26,18 +26,18 @@ import scala.math._
   */
 object Calculator {
 
-	val TOLERANCE = 1.0e-10
+	val DEFAULT_TOLERANCE = 1.0e-10
 
-	def eval(expression: String, substitutions: Map[String, Double] = Map.empty): Double = {
+	def eval(expression: String, substitutions: Map[String, Double] = Map.empty, tolerance: Double = DEFAULT_TOLERANCE): Double = {
 		for (a <- substitutions.keys; b <- substitutions.keys) if (a != b) require (!(a contains b),
 			s"Substitution $b is a substring of $a; this would be ambiguous")
 		val fixed = Map(" " -> "", "!=" -> "≠", "<=" -> "≤", ">=" -> "≥").foldLeft(expression) ((e, s) => e.replaceAllLiterally(s._1, s._2))
 		// prepend 0 because unary minus isn't supported
 		val substituted = substitutions.foldLeft(fixed) ((e, s) => e.replaceAllLiterally(s._1, if (s._2 < 0) "(0" + s._2.toString + ")" else s._2.toString))
-		eval(new Calculator(substituted).line.run().get)
+		eval(new Calculator(substituted).line.run().get)(tolerance)
 	}
 
-	private def eval(expression: Expression): Double =
+	private def eval(expression: Expression)(implicit tolerance: Double): Double =
 		expression match {
 
 			case Value(v) => v.toDouble
@@ -61,8 +61,8 @@ object Calculator {
 
 			case Equals(a, b) => if (eval(a) == eval(b)) 1.0 else 0.0
 			case NotEquals(a, b) => if (eval(a) != eval(b)) 1.0 else 0.0
-			case ApproxEquals(a, b) => if (math.abs(eval(a) - eval(b)) < TOLERANCE) 1.0 else 0.0
-			case NotApproxEquals(a, b) => if (math.abs(eval(a) - eval(b)) < TOLERANCE) 0.0 else 1.0
+			case ApproxEquals(a, b) => if (math.abs(eval(a) - eval(b)) < tolerance) 1.0 else 0.0
+			case NotApproxEquals(a, b) => if (math.abs(eval(a) - eval(b)) < tolerance) 0.0 else 1.0
 			case LessThan(a, b) => if (eval(a) < eval(b)) 1.0 else 0.0
 			case MoreThan(a, b) => if (eval(a) > eval(b)) 1.0 else 0.0
 			case AtLeast(a, b) => if (eval(a) >= eval(b)) 1.0 else 0.0

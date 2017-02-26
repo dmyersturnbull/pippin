@@ -1,4 +1,4 @@
-package kokellab.utils.grammers
+package kokellab.utils.grammars
 
 import org.scalatest.{Matchers, PropSpec}
 import org.scalatest.prop.TableDrivenPropertyChecks
