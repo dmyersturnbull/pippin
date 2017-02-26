@@ -12,8 +12,8 @@ object BooleanGrammar {
 			parser.line.run().get
 		} catch {
 			case e: ParseError =>
-				println(parser.formatError(e, new ErrorFormatter(showExpected = true, showFrameStartOffset = true, showLine = true, showPosition = true, showTraces = true)))
-				throw e
+				throw new GrammarException(s"The expression $expression could not be parsed",
+					Some(parser.formatError(e, new ErrorFormatter(showExpected = true, showFrameStartOffset = true, showLine = true, showPosition = true, showTraces = true))), Some(e))
 		}
 	}
 }

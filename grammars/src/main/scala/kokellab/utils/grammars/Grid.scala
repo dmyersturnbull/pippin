@@ -40,7 +40,20 @@ trait PointLike {
 	override def toString: String = s"($row, $column)[i=$index]"
 }
 
-class AlphnumericRangeParser(val input: ParserInput, val grid: AlphanumericGrid) extends Parser {
+object AlphanumericRangeGrammar {
+	def eval(input: String, nRows: Int, nColumns: Int): Seq[PointLike] = {
+		val parser = new AlphnumericRangeGrammar(input, AlphanumericGrid(nRows, nColumns))
+		try {
+			parser.run().get
+		} catch {
+			case e: ParseError =>
+				throw new GrammarException(s"The expression $input could not be parsed",
+					Some(parser.formatError(e, new ErrorFormatter(showExpected = true, showFrameStartOffset = true, showLine = true, showPosition = true, showTraces = true))), Some(e))
+		}
+	}
+}
+
+class AlphnumericRangeGrammar(val input: ParserInput, val grid: AlphanumericGrid) extends Parser {
 
 	implicit val pointGen = (r: Int, c: Int) => grid.Point(r, c)
 

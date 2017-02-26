@@ -55,7 +55,14 @@ object RealNumberGrammar {
 		val fns = if (seed.isDefined) defaultFunctionMap ++ stochasticFunctionMap(seed.get)
 		else defaultFunctionMap
 		val fixed = expression.replaceAllLiterally(" ", "")
-		new RealNumberGrammar(fixed, fns).line.run().get
+		val parser = new RealNumberGrammar(fixed, fns)
+		try {
+			parser.line.run().get
+		} catch {
+			case e: ParseError =>
+				throw new GrammarException(s"The expression $expression could not be parsed",
+					Some(parser.formatError(e, new ErrorFormatter(showExpected = true, showFrameStartOffset = true, showLine = true, showPosition = true, showTraces = true))), Some(e))
+		}
 	}
 
 	private def mean(a: Seq[Double]): Double = a.sum / a.size
@@ -68,7 +75,9 @@ object RealNumberGrammar {
 
 }
 
-class RealNumberGrammar(var input: ParserInput, functions: Map[String, Seq[Double] => Double] = RealNumberGrammar.defaultFunctionMap) extends Parser {
+class RealNumberGrammar(var input: ParserInput,
+						functions: Map[String, Seq[Double] => Double] = RealNumberGrammar.defaultFunctionMap
+					   ) extends Parser {
 
 	def line = rule { expression ~ EOI }
 
@@ -91,15 +100,18 @@ class RealNumberGrammar(var input: ParserInput, functions: Map[String, Seq[Doubl
 		number | parentheses | function
 	}
 
+	/**
+	  * This is the evaluated value of a function call
+	  */
 	def function: Rule1[Double] = rule {
 		capture(functionName) ~ parameterList ~> (((fn: String), (e: Seq[Double])) => {
 			if (functions contains fn) {
 				try {
 					functions(fn)(e)
 				} catch {
-					case error: NoSuchElementException => throw new IllegalArgumentException(s"Not enough arguments for function $fn", error)
+					case error: NoSuchElementException => throw new GrammarException(s"Not enough arguments for function $fn: ${error.getMessage}")
 				}
-			} else throw new IllegalArgumentException(s"Function $fn is not defined") // TODO better error
+			} else throw new GrammarException(s"Function $fn is not defined")
 		})
 	}
 
