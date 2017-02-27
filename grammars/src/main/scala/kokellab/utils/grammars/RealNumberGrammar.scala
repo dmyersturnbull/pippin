@@ -38,8 +38,7 @@ object RealNumberGrammar {
 		"geomean" -> geomean
 	)
 
-	def stochasticFunctionMap(seed: Int): Map[String, Seq[Double] => Double] = {
-		implicit val randBasis: RandBasis = new RandBasis(new ThreadLocalRandomGenerator(new MersenneTwister(seed)))
+	def stochasticFunctionMap(randBasis: RandBasis): Map[String, Seq[Double] => Double] = {
 		Map(
 			"unifR" -> (a => new distributions.Uniform(a(0), a(1))(randBasis).sample()), // min, max
 			"normR" -> (a => new distributions.Gaussian(a(0), a(1))(randBasis).sample()), // mean/ std
@@ -51,8 +50,8 @@ object RealNumberGrammar {
 		)
 	}
 
-	def eval(expression: String, seed: Option[Int] = None) = {
-		val fns = if (seed.isDefined) defaultFunctionMap ++ stochasticFunctionMap(seed.get)
+	def eval(expression: String, randBasis: Option[RandBasis] = None) = {
+		val fns = if (randBasis.isDefined) defaultFunctionMap ++ stochasticFunctionMap(randBasis.get)
 		else defaultFunctionMap
 		val fixed = expression.replaceAllLiterally(" ", "")
 		val parser = new RealNumberGrammar(fixed, fns)

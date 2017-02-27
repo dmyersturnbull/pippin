@@ -2,6 +2,8 @@ package kokellab.utils.grammars
 
 import java.util.regex.Pattern
 
+import breeze.stats.distributions.RandBasis
+
 import scala.collection.SeqLike
 import scala.util.matching.Regex
 
@@ -10,13 +12,13 @@ import scala.util.matching.Regex
   */
 object Parameterizations {
 
-	def mapValuesOntoGrid(range: String, valueExpression: String, substitutionsText: String, nRows: Int, nColumns: Int, defaultValue: String = "", seed: Option[Int]): Map[PointLike, String] = {
+	def mapValuesOntoGrid(range: String, valueExpression: String, substitutionsText: String, nRows: Int, nColumns: Int, defaultValue: String = "", randBasis: Option[RandBasis] = None): Map[PointLike, String] = {
 		val cells: Seq[PointLike] = AlphanumericRangeGrammar.eval(range, nRows, nColumns)
 		val tuple = mapIndexToValue(cells map (_.index), valueExpression, substitutionsText) match {
 			case Left(singleExpression) =>
 				cells map { cell => cell -> {
 					val replaced = DollarSignParams.substitute(singleExpression, Map("$r" -> cell.row.toString, "$c" -> cell.column.toString, "$i" -> cell.index.toString))
-					IfElseGrammar.eval(replaced, seed = seed) match {
+					IfElseGrammar.eval(replaced, randBasis = randBasis) match {
 						case None => defaultValue
 						case Some(v) => v.toString
 					}

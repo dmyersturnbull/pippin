@@ -1,13 +1,17 @@
 package kokellab.utils.grammars
 
+import breeze.stats.distributions.RandBasis
 import org.parboiled2._
 
 object BooleanGrammar {
-	def eval(expression: String, tolerance: Double = 0.000001, seed: Option[Int] = None) = {
-		val fns = if (seed.isDefined) RealNumberGrammar.defaultFunctionMap ++ RealNumberGrammar.stochasticFunctionMap(seed.get)
+
+	val DEFAULT_TOLERANCE = 0.000001
+
+	def eval(expression: String, tolerance: Double = DEFAULT_TOLERANCE, randBasis: Option[RandBasis] = None) = {
+		val fns = if (randBasis.isDefined) RealNumberGrammar.defaultFunctionMap ++ RealNumberGrammar.stochasticFunctionMap(randBasis.get)
 		else RealNumberGrammar.defaultFunctionMap
 		val fixed = Map(" " -> "", "!=" -> "≠", "<=" -> "≤", ">=" -> "≥", "==" -> "=").foldLeft(expression) ((e, s) => e.replaceAllLiterally(s._1, s._2))
-		val parser = new BooleanGrammar(fixed, tolerance, seed, fns)
+		val parser = new BooleanGrammar(fixed, tolerance, randBasis, fns)
 		try {
 			parser.line.run().get
 		} catch {
@@ -18,7 +22,9 @@ object BooleanGrammar {
 	}
 }
 
-class BooleanGrammar(val input: ParserInput, tolerance: Double = 0.000001, seed: Option[Int] = None, functions: Map[String, Seq[Double] => Double] = RealNumberGrammar.defaultFunctionMap) extends Parser {
+class BooleanGrammar(val input: ParserInput, tolerance: Double = BooleanGrammar.DEFAULT_TOLERANCE,
+					 randBasis: Option[RandBasis] = None, functions: Map[String, Seq[Double] => Double] = RealNumberGrammar.defaultFunctionMap
+					) extends Parser {
 
 	def line = rule { booleanExpression ~ EOI }
 
