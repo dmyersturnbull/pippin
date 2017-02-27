@@ -1,7 +1,5 @@
 package kokellab.utils.grammars
 
-import java.util.regex.Pattern
-
 import breeze.stats.distributions.RandBasis
 
 import scala.collection._

@@ -8,25 +8,18 @@ object BooleanGrammar {
 	val DEFAULT_TOLERANCE = 0.000001
 
 	def eval(expression: String, tolerance: Double = DEFAULT_TOLERANCE, randBasis: Option[RandBasis] = None) = {
-		val fns = if (randBasis.isDefined) RealNumberGrammar.defaultFunctionMap ++ RealNumberGrammar.stochasticFunctionMap(randBasis.get)
+		val functions = if (randBasis.isDefined) RealNumberGrammar.defaultFunctionMap ++ RealNumberGrammar.stochasticFunctionMap(randBasis.get)
 		else RealNumberGrammar.defaultFunctionMap
-		val fixed = Map(" " -> "", "!=" -> "≠", "<=" -> "≤", ">=" -> "≥", "==" -> "=").foldLeft(expression) ((e, s) => e.replaceAllLiterally(s._1, s._2))
-		val parser = new BooleanGrammar(fixed, tolerance, randBasis, fns)
-		try {
-			parser.line.run().get
-		} catch {
-			case e: ParseError =>
-				throw new GrammarException(s"The expression $expression could not be parsed",
-					Some(parser.formatError(e, new ErrorFormatter(showExpected = true, showFrameStartOffset = true, showLine = true, showPosition = true, showTraces = true))), Some(e))
-		}
+		val parser = new BooleanGrammar(GrammarUtils.replaceCommon(expression), tolerance, randBasis, functions)
+		GrammarUtils.wrapGrammarException(expression, parser, () => parser.booleanLine.run().get)
 	}
 }
 
-class BooleanGrammar(val input: ParserInput, tolerance: Double = BooleanGrammar.DEFAULT_TOLERANCE,
+class BooleanGrammar(override val input: ParserInput, tolerance: Double = BooleanGrammar.DEFAULT_TOLERANCE,
 					 randBasis: Option[RandBasis] = None, functions: Map[String, Seq[Double] => Double] = RealNumberGrammar.defaultFunctionMap
-					) extends Parser {
+					) extends RealNumberGrammar(input, functions) {
 
-	def line = rule { booleanExpression ~ EOI }
+	def booleanLine = rule { booleanExpression ~ EOI }
 
 	def booleanExpression = rule {
 		wrappedJunction ~ zeroOrMore(
@@ -72,60 +65,5 @@ class BooleanGrammar(val input: ParserInput, tolerance: Double = BooleanGrammar.
 	  * @param operation A function that maps a left-hand side value to a boolean (equivalent to previousValue operation nextValue)
 	  */
 	case class Condition(rhs: Double, operation: Double => Boolean)
-
-	def expression: Rule1[Double] = rule {
-		term ~ zeroOrMore(
-			'+' ~ term ~> ((_: Double) + _)
-				| (ch('-')|'−') ~ term ~> ((_: Double) - _)
-		)
-	}
-
-	def term: Rule1[Double] = rule {
-		factor ~ zeroOrMore(
-			(ch('*') | '×') ~ factor ~> ((_: Double) * _)
-				| '/' ~ factor ~> ((_: Double) / _)
-				| '%' ~ factor ~> ((_: Double) % _)
-		)
-	}
-
-	def factor = rule {
-		number | parentheses | function
-	}
-
-	def function: Rule1[Double] = rule {
-		capture(functionName) ~ parameterList ~> (((fn: String), (e: Seq[Double])) => {
-			if (functions contains fn) {
-				try {
-					functions(fn)(e)
-				} catch {
-					case error: NoSuchElementException => throw new IllegalArgumentException(s"Not enough arguments for function $fn", error)
-				}
-			} else throw new IllegalArgumentException(s"Function $fn is not defined") // TODO better error
-		})
-	}
-
-	def functionName: Rule0 = rule {
-		oneOrMore(CharPredicate.Alpha) ~ optional(oneOrMore(CharPredicate.AlphaNum))
-	}
-
-	def parameterList: Rule1[Seq[Double]] = rule {
-		'(' ~ oneOrMore(expression).separatedBy(",") ~ ')'
-	}
-
-	def parentheses = rule { '(' ~ expression ~ ')' }
-
-	def number: Rule1[Double] = rule {
-		capture(optional(anyOf("-−")) ~ (floatingPoint | integer)) ~> ((s: String) => s.toDouble)
-	}
-
-	def integer: Rule0 = rule {
-		oneOrMore(CharPredicate.Digit)
-	}
-
-	def floatingPoint: Rule0 = rule {
-		oneOrMore(CharPredicate.Digit) ~  ch('.') ~ oneOrMore(CharPredicate.Digit)
-	}
-
-	def fraction: Rule0 = rule { ch('.') ~ oneOrMore(CharPredicate.Digit) }
 
 }

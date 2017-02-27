@@ -51,17 +51,9 @@ object RealNumberGrammar {
 	}
 
 	def eval(expression: String, randBasis: Option[RandBasis] = None) = {
-		val fns = if (randBasis.isDefined) defaultFunctionMap ++ stochasticFunctionMap(randBasis.get)
-		else defaultFunctionMap
-		val fixed = expression.replaceAllLiterally(" ", "")
-		val parser = new RealNumberGrammar(fixed, fns)
-		try {
-			parser.line.run().get
-		} catch {
-			case e: ParseError =>
-				throw new GrammarException(s"The expression $expression could not be parsed",
-					Some(parser.formatError(e, new ErrorFormatter(showExpected = true, showFrameStartOffset = true, showLine = true, showPosition = true, showTraces = true))), Some(e))
-		}
+		val functions = if (randBasis.isDefined) defaultFunctionMap ++ stochasticFunctionMap(randBasis.get) else defaultFunctionMap
+		val parser = new RealNumberGrammar(GrammarUtils.replaceCommon(expression), functions)
+		GrammarUtils.wrapGrammarException(expression, parser, () => parser.realNumberLine.run().get)
 	}
 
 	private def mean(a: Seq[Double]): Double = a.sum / a.size
@@ -74,11 +66,11 @@ object RealNumberGrammar {
 
 }
 
-class RealNumberGrammar(var input: ParserInput,
+class RealNumberGrammar(val input: ParserInput,
 						functions: Map[String, Seq[Double] => Double] = RealNumberGrammar.defaultFunctionMap
 					   ) extends Parser {
 
-	def line = rule { expression ~ EOI }
+	def realNumberLine = rule { expression ~ EOI }
 
 	def expression: Rule1[Double] = rule {
 		term ~ zeroOrMore(
