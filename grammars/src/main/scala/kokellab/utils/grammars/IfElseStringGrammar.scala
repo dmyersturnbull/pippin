@@ -27,7 +27,7 @@ object IfElseStringGrammar {
 
 }
 
-class IfElseStringGrammar(override val input: ParserInput, override val functions: Map[String, Seq[Int] => Int]) extends IntegerBooleanGrammar(input, functions) {
+class IfElseStringGrammar(override val input: ParserInput, override val functions: Map[String, Seq[Int] => Int]) extends BooleanIntegerGrammar(input, functions) {
 
 	def ifElseLine: Rule1[Option[String]] = rule { (ifElifElse | someValue) ~ EOI }
 

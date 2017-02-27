@@ -3,19 +3,19 @@ package kokellab.utils.grammars
 import breeze.stats.distributions.RandBasis
 import org.parboiled2._
 
-object BooleanGrammar {
+object BooleanRealNumberGrammar {
 
 	val DEFAULT_TOLERANCE = 0.000001
 
 	def eval(expression: String, tolerance: Double = DEFAULT_TOLERANCE, randBasis: Option[RandBasis] = None) = {
 		val functions = if (randBasis.isDefined) RealNumberGrammar.defaultFunctionMap ++ RealNumberGrammar.stochasticFunctionMap(randBasis.get)
 		else RealNumberGrammar.defaultFunctionMap
-		val parser = new BooleanGrammar(GrammarUtils.replaceCommon(expression), tolerance, randBasis, functions)
+		val parser = new BooleanRealNumberGrammar(GrammarUtils.replaceCommon(expression), tolerance, randBasis, functions)
 		GrammarUtils.wrapGrammarException(expression, parser, () => parser.booleanLine.run().get)
 	}
 }
 
-class BooleanGrammar(override val input: ParserInput, tolerance: Double = BooleanGrammar.DEFAULT_TOLERANCE,
+class BooleanRealNumberGrammar(override val input: ParserInput, tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE,
 					 randBasis: Option[RandBasis] = None, functions: Map[String, Seq[Double] => Double] = RealNumberGrammar.defaultFunctionMap
 					) extends RealNumberGrammar(input, functions) {
 

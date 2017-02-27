@@ -2,15 +2,15 @@ package kokellab.utils.grammars
 
 import org.parboiled2._
 
-object IntegerBooleanGrammar {
+object BooleanIntegerGrammar {
 
 	def eval(expression: String) = {
-		val parser = new IntegerBooleanGrammar(GrammarUtils.replaceCommon(expression))
+		val parser = new BooleanIntegerGrammar(GrammarUtils.replaceCommon(expression))
 		GrammarUtils.wrapGrammarException(expression, parser, () => parser.booleanLine.run().get)
 	}
 }
 
-class IntegerBooleanGrammar(override val input: ParserInput,
+class BooleanIntegerGrammar(override val input: ParserInput,
 					functions: Map[String, Seq[Int] => Int] = IntegerGrammar.defaultFunctionMap
 					) extends IntegerGrammar(input, functions) {
 

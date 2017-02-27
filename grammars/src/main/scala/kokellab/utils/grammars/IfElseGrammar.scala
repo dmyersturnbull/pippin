@@ -3,20 +3,20 @@ package kokellab.utils.grammars
 import breeze.stats.distributions.RandBasis
 import org.parboiled2._
 
-object IfElseGrammar {
+object IfElseRealNumberGrammar {
 
-	def eval(expression: String, tolerance: Double = BooleanGrammar.DEFAULT_TOLERANCE, randBasis: Option[RandBasis] = None) = {
+	def eval(expression: String, tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE, randBasis: Option[RandBasis] = None) = {
 		val functions = if (randBasis.isDefined) RealNumberGrammar.defaultFunctionMap ++ RealNumberGrammar.stochasticFunctionMap(randBasis.get)
 		else RealNumberGrammar.defaultFunctionMap
-		val parser = new IfElseGrammar(GrammarUtils.replaceCommon(expression), tolerance, randBasis, functions)
+		val parser = new IfElseRealNumberGrammar(GrammarUtils.replaceCommon(expression), tolerance, randBasis, functions)
 		GrammarUtils.wrapGrammarException(expression, parser, () => parser.ifElseLine.run().get)
 	}
 }
 
-class IfElseGrammar(override val input: ParserInput,
-					tolerance: Double = BooleanGrammar.DEFAULT_TOLERANCE, randBasis: Option[RandBasis] = None,
+class IfElseRealNumberGrammar(override val input: ParserInput,
+					tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE, randBasis: Option[RandBasis] = None,
 					functions: Map[String, Seq[Double] => Double] = RealNumberGrammar.defaultFunctionMap
-				   ) extends BooleanGrammar(input, tolerance, randBasis, functions) {
+				   ) extends BooleanRealNumberGrammar(input, tolerance, randBasis, functions) {
 
 	def ifElseLine: Rule1[Option[Double]] = rule { (someExpression | ifElifElse) ~ EOI }
 
