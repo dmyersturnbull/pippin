@@ -9,7 +9,7 @@ import scala.util.matching.Regex.Match
 object TimeSeriesGrammar {
 
 	def build(expression: String, start: Int, stop: Int,
-			  randBasis: Option[RandBasis] = None, defaultValue: Double = 0.0, tolerance: Double = BooleanGrammar.DEFAULT_TOLERANCE
+			  randBasis: Option[RandBasis] = None, defaultValue: Double = 0.0, tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE
 			 ): Seq[Double] = {
 		val (value, interval) = extract(expression)
 		new TimeSeriesGrammar(value, start, stop, randBasis, evaluationInterval = interval).build()
@@ -29,7 +29,7 @@ object TimeSeriesGrammar {
 }
 
 class TimeSeriesGrammar(expression: String, start: Int, stop: Int,
-						randBasis: Option[RandBasis] = None, evaluationInterval: Int = 1, defaultValue: Double = 0.0, tolerance: Double = BooleanGrammar.DEFAULT_TOLERANCE) {
+						randBasis: Option[RandBasis] = None, evaluationInterval: Int = 1, defaultValue: Double = 0.0, tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE) {
 
 	private val tPattern = """\$t(?![\[A-Za-z0-9_])""".r
 	private val tArrayPattern = """\$t\[([^\]]+)\]""".r
@@ -56,7 +56,7 @@ class TimeSeriesGrammar(expression: String, start: Int, stop: Int,
 
 		// calculates the if-elif-else expression for an index, replacing $t and $t[index] as needed
 		def calculate(i: Int): Double =
-			IfElseGrammar.eval(substitute(expression, i), tolerance = tolerance, randBasis = randBasis).getOrElse(defaultValue)
+			IfElseRealNumberGrammar.eval(substitute(expression, i), tolerance = tolerance, randBasis = randBasis).getOrElse(defaultValue)
 
 		var lastValue = 0.0
 		for (i <- start to stop) {

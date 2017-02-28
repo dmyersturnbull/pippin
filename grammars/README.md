@@ -1,4 +1,48 @@
 Here are the parsers (Parsing Expressing Grammars). Each description is currently simplified here for clarity, and the syntax is a slightly flawed EBNF.
+Whitespace is always ignored, and these operator "long-hand" forms are converted to what the grammar uses:
+
+- == → =
+- != → ≠
+- <= → ≤
+- \>= → ≥
+- and → ∧
+- or → ∨
+- nand → ⊼
+- nor → ⊽
+- xor → ⊻
+
+|'≠'|'≈'|≉'|'<'|'>'|'≥'|'≤'|'&'|'|'|'∧'|'∨'|'⊽'|'⊼'|'⊻'
+
+## real number math
+
+```
+<digit>  ::= '0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'
+<number> ::= {<digit>}['.'{<digit>}]
+<params> ::= <expr>{','<expr>}
+<fn>     ::= <function>'('<params>')'
+<factor> ::= <parens>|<fn>|<number>
+<parens> ::= '('<terms>')'
+<opF>    ::= '*'|'×'|'/'|'%'
+<opT>    ::= '+'|'-'|'−'
+<term>   ::= <factor>{<opF><factor>}
+<expr>   ::= <term>{<opT><term>}
+```
+
+## integer math
+
+## boolean expressions of real numbers
+
+## boolean expressions of integers
+
+## if–elif–else expressions of real numbers
+
+## if–elif–else expressions of integers
+
+## time-series real numbers
+
+## alphanumeric grid ranges
+
+
 
 ## math
 
@@ -6,13 +50,13 @@ Here are the parsers (Parsing Expressing Grammars). Each description is currentl
 
 ```
 <digit>  ::= '0'|'1'|'2'|'3'|'4'|'5'|'6'|'7'|'8'|'9'
-<number> ::= {<digit>}['.'{<digit>]}
+<number> ::= {<digit>}['.'{<digit>}]
 <fn>     ::= <function>'('<expr>')'
 <factor> ::= <parens>|<fn>|<number>
 <parens> ::= '('<terms>')'
 <opF>    ::= '*'|'×'|'/'|'%'
 <opT>    ::= '+'|'-'|'−'
-<opE>    ::= '='|'≠'|'≈'|≉'|'<'|'>'|'≥'|'≤'|'&'|'|'|'∧'|'∨'|'⊽'|'⊼'|'⊻'|'→'
+<opE>    ::= '='|'≠'|'≈'|≉'|'<'|'>'|'≥'|'≤'|'&'|'|'|'∧'|'∨'|'⊽'|'⊼'|'⊻'
 <term>   ::= <factor>{<opF><factor>}
 <terms>  ::= <term>{<opT><term>}
 <expr>   ::= <terms>{<opE><terms>}

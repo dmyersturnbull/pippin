@@ -39,7 +39,7 @@ case class AlphanumericGrid(nRows: Int, nColumns: Int) extends GridLike {
 		require(row > 0 && row <= nRows && column > 0 && column <= nColumns, s"($row, $column) is out of bounds of ($nRows, $nColumns) grid")
 		def this(s: String) = this(stringToRow(s), stringToColumn(s))
 		def this(i: Int) = this(i / nColumns, i % nColumns)
-		val index = nColumns*row + column
+		val index = nColumns*(row-1) + column
 		override val name: String = (row + 'A' - 1).toChar + column.toString
 	}
 
