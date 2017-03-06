@@ -16,7 +16,7 @@ import kokellab.utils.core.parseConfig
   * Please note that using SMILESToInChI returns only a single, arbitrary steroisomer, at least if the sterocenters are not defined in the SMILES.
   * However, the mass spec API does not suffer from this issue.
   */
-class Chemspider(token: String = parseConfig("config/app.properties").getString("chemspiderToken")) extends LazyLogging {
+class Chemspider(token: String = if (sys.env contains "CHEMSPIDER_TOKEN") sys.env("CHEMSPIDER_TOKEN") else parseConfig("conf/app.properties").getString("chemspiderToken")) extends LazyLogging {
 
 	/**
 	  * @return The text of the mol file
