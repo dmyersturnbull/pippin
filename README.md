@@ -1,6 +1,8 @@
 # kl-common-scala
 Public Scala utilities to be shared across projects in the [Kokel Lab](https://kokellab.com).
 
+[![CircleCI](https://circleci.com/gh/kokellab/kl-common-scala.svg?style=shield)](https://circleci.com/gh/kokellab/kl-common-scala)
+
 ## organization
 
 - _core_ includes general utilities and a Logback duplicate message filter, and it's a dependency for the other subprojects.
