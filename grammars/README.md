@@ -1,5 +1,5 @@
 Here are the parsers (Parsing Expressing Grammars). Each description is currently simplified here for clarity, and the syntax is a slightly flawed EBNF.
-Whitespace is always ignored, and these operator "long-hand" forms are converted to what the grammar uses:
+Whitespace is always ignored, and these operator long forms are converted to what the grammar uses:
 
 - == → =
 - != → ≠
@@ -106,7 +106,7 @@ The result is 50 for the first 10s, 100 for the next 10s, and follows Brownian m
 The operators `-`, `*`, and `...` have distinct meanings for a grid of dimensions `(n, m)`.
 
 - `-` can only span across a row or down a column: `A2-A12` or `C4-H4`, but not `A1-C8`.
-- `*` means span across a block of $(r_2-r_1)(c_2-r_2)$ cells.
-- `...` means span across all of the cells between the two indices, capturing $n*r_2 + c_2 - n*r_1 - c_1$ cells.
+- `*` means span across a block of `(r_2-r_1)(c_2-r_2)` cells.
+- `...` means span across all of the cells between the two indices, capturing `n*r_2 + c_2 - n*r_1 - c_1` cells.
 
 
