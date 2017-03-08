@@ -7,17 +7,21 @@ import org.openscience.cdk.smiles._
 import org.openscience.cdk.silent.SilentChemObjectBuilder
 import scala.collection.JavaConversions._
 
-class Chem {
+object Chem {
 
-	def smilesToInchi(smiles: String): Inchi = {
-		val molecule = smilesToMol(smiles)
-		molToInchi(molecule)
-	}
+	def smilesToInchi(smiles: String): Inchi =
+		molToInchi(smilesToMol(smiles))
 
 	def molToInchi(molecule: IAtomContainer): Inchi = {
 		val generator = InChIGeneratorFactory.getInstance().getInChIGenerator(molecule)
 		Inchi(generator.getInchi, generator.getInchiKey)
 	}
+
+	def inchiToSmiles(inchi: String): String =
+		SmilesGenerator.absolute().create(inchiToMol(inchi))
+
+	def inchiToInchikey(inchi: String): String =
+		molToInchi(inchiToMol(inchi)).inchikey
 
 	def smilesToMol(smiles: String): IAtomContainer =
 		new SmilesParser(SilentChemObjectBuilder.getInstance()).parseSmiles(smiles)
