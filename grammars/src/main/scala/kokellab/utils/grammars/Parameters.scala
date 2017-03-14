@@ -9,6 +9,7 @@ import scala.util.matching.Regex
 
 /**
   * Code for a specific purpose.
+  * TODO This code is hard to understand and a bit weird.
   */
 object Parameterizations {
 
@@ -65,7 +66,17 @@ object Parameterizations {
 		}
 	}
 
-	def parse(text: String, pars: Set[DollarSignParam], lengths: Map[String, Int], pattern: Pattern = Pattern.compile(".*")): Map[Param, DollarSignSub] = {
+	def parse(originalText: String, pars: Set[DollarSignParam], lengths: Map[String, Int], pattern: Pattern = Pattern.compile(".*")): Map[Param, DollarSignSub] = {
+
+		val multiLineArrayPattern = """=\s*\[\s*\n([^\]]*)\n\s*\]""".r
+
+		def middle(s: String): String = {
+			s.split("\n") map (_.trim) map {l =>
+				if (l.endsWith(",")) l.substring(0, l.length - 1) else l
+			}
+		}.mkString(", ")
+
+		val text = multiLineArrayPattern.replaceAllIn(originalText, m => "= [" + middle(m.group(1)) + "]")
 
 		text.split("\n") flatMap { s =>
 			if (s.trim.isEmpty) None else Some {

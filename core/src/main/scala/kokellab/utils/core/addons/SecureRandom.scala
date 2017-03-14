@@ -37,6 +37,7 @@ OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY TH
 
 package kokellab.utils.core.addons
 
+import scala.language.higherKinds
 import scala.collection.generic.CanBuildFrom
 import scala.collection.immutable.{List, Stream}
 import scala.collection.mutable.ArrayBuffer
@@ -101,6 +102,10 @@ class SecureRandom extends java.security.SecureRandom {
 		}
 
 		Stream continually nextAlphaNum
+	}
+
+	def nextHexadecimal: Stream[Char] = {
+		alphanumeric filter (c => c.isDigit || (Set('a', 'c', 'b', 'd', 'e', 'f') contains c))
 	}
 
 }

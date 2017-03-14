@@ -5,7 +5,7 @@ import org.parboiled2._
 
 object IfElseRealNumberGrammar {
 
-	def eval(expression: String, tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE, randBasis: Option[RandBasis] = None) = {
+	def eval(expression: String, tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE, randBasis: Option[RandBasis] = None): Option[Double] = {
 		val functions = if (randBasis.isDefined) RealNumberGrammar.defaultFunctionMap ++ RealNumberGrammar.stochasticFunctionMap(randBasis.get)
 		else RealNumberGrammar.defaultFunctionMap
 		val parser = new IfElseRealNumberGrammar(GrammarUtils.replaceCommon(expression), tolerance, randBasis, functions)

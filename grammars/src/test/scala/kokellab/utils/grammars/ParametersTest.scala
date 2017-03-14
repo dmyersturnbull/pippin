@@ -17,9 +17,36 @@ class ParametersTest extends PropSpec with TableDrivenPropertyChecks with Matche
 			"""
 	$a = 55
 	$b = "one hundred"
- 	$...c = ["this", "is", "an", "array"]
+ 	$...c = [this, is, an, array]
 	""", Set(DollarSignParam("$a", false), DollarSignParam("$b", false), DollarSignParam("$...c", false)), Map("$...c" -> 4))
-//	results foreach println
+		(results map (r => (r._1.name, r._2.values))).toMap should equal (Map(
+			"$a" -> List("55"),
+			"$b" -> List("\"one hundred\""),
+			"$...c" -> List("this", "is", "an", "array")
+		))
+	}
+
+	property(s"Parse with multline array") {
+		val results = Parameterizations.parse(
+			"""
+ 	$...c = [
+ 	this
+ 	is
+ 	an
+ 	array
+ 	]
+$...d = [
+	this,
+ is,
+     another,
+	 		array,
+	ok?
+ ]
+	""", Set(DollarSignParam("$...d", false), DollarSignParam("$...c", false)), Map("$...c" -> 4, "$...d" -> 5))
+		(results map (r => (r._1.name, r._2.values))).toMap should equal (Map(
+			"$...c" -> List("this", "is", "an", "array"),
+			"$...d" -> List("this", "is", "another", "array", "ok?")
+		))
 	}
 
 	property(s"mapIndexToValue") {
