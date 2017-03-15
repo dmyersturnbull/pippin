@@ -34,7 +34,7 @@ class ParametersTest extends PropSpec with TableDrivenPropertyChecks with Matche
  	this
  	is
  	an
- 	array
+ 	"array"
  	]
 $...d = [
 	this,
@@ -44,8 +44,8 @@ $...d = [
 	ok?
  ]
 	""", Set(DollarSignParam("$...d", false), DollarSignParam("$...c", false)), Map("$...c" -> 4, "$...d" -> 5))
-		(results map (r => (r._1.name, r._2.values))).toMap should equal (Map(
-			"$...c" -> List("this", "is", "an", "array"),
+		(results map (r => (r._1.name, r._2.values))) should equal (Map(
+			"$...c" -> List("this", "is", "an", "\"array\""),
 			"$...d" -> List("this", "is", "another", "array", "ok?")
 		))
 	}
@@ -56,8 +56,8 @@ $...d = [
 	}
 
 	property("map values onto grid") {
-		Parameterizations.mapValuesOntoGrid("A1-A5", "$c+$abc", "$abc = 50", 4, 8, s => IfElseIntegerGrammar.eval(s) map (_.toString)) map (z => z._1.index -> z._2.toDouble) should equal (Map(1 -> 51, 2 -> 52, 3 -> 53, 4 -> 54, 5 -> 55))
-		Parameterizations.mapValuesOntoGrid("A1*C2", "$abc + 10*$r + $c", "$abc = 10", 4, 8, s => IfElseIntegerGrammar.eval(s) map (_.toString)) map (z => (z._1.row, z._1.column) -> z._2.toDouble) should equal (
+		Parameterizations.mapValuesOntoGrid("A1-A5", "$c+$abc", "$abc = 50", 4, 8, IfElseIntegerGrammar.eval, 0) map (z => z._1.index -> z._2) should equal (Map(1 -> 51, 2 -> 52, 3 -> 53, 4 -> 54, 5 -> 55))
+		Parameterizations.mapValuesOntoGrid("A1*C2", "$abc + 10*$r + $c", "$abc = 10", 4, 8, IfElseIntegerGrammar.eval, 0) map (z => (z._1.row, z._1.column) -> z._2) should equal (
 			Map((1,1) -> 21, (1,2)-> 22, (2,1) -> 31, (2,2)-> 32, (3,1) -> 41, (3,2)-> 42)
 		)
 	}

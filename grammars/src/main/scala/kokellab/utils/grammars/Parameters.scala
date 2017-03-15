@@ -13,17 +13,17 @@ import scala.util.matching.Regex
   */
 object Parameterizations {
 
-	def mapValuesOntoGrid(range: String, valueExpression: String, substitutionsText: String, nRows: Int, nColumns: Int, grammarFn: String => Option[String],
-						  defaultValue: String = "", failOnUnexpected: Boolean = false
-						 ): Map[PointLike, String] = {
+	def mapValuesOntoGrid[A](range: String, valueExpression: String, substitutionsText: String, nRows: Int, nColumns: Int, grammarFn: String => Option[A], failOnUnexpected: Boolean = false
+						 ): Map[PointLike, A] = {
 		val cells: Seq[PointLike] = GridRangeGrammar.eval(range, nRows, nColumns)
 		val tuple = mapIndexToValue(cells map (_.index), valueExpression, substitutionsText, failOnUnexpected = failOnUnexpected) match {
 			case Left(singleExpression) =>
-				cells map { cell => cell -> {
+				cells flatMap { cell => {
 					val replaced = DollarSignParams.substitute(singleExpression, Map("$r" -> cell.row.toString, "$c" -> cell.column.toString, "$i" -> cell.index.toString))
-					grammarFn(replaced) getOrElse defaultValue
+					grammarFn(replaced) map {ans => cell -> ans}
 				}}
-			case Right(manyValues) => cells zip manyValues
+			case Right(manyValues) =>
+				cells zip (manyValues map (v => grammarFn(v).get))
 		}
 		tuple.toMap
 	}
@@ -81,7 +81,7 @@ object Parameterizations {
 				val key = s.substring(0, s.indexOf('=')).trim
 				val value = s.substring(s.indexOf('=') + 1).trim
 				if (!(params exists (p => p.name == key))) {
-					if (failOnUnexpected) throw new GrammarException(s"A parameter in '$text' is not defined")
+					if (failOnUnexpected) throw new GrammarException(s"A parameter in: \n[\n$text\n]\n ... is not defined")
 					else None
 				} else Some{
 					val param = params.find(p => p.name == key).get
