@@ -5,7 +5,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.prop.Tables.Table
 import org.scalactic.TolerantNumerics
 
-class SimpleCalculatorTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
+class RealNumberGrammarTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
 
 	val doubleEq = TolerantNumerics.tolerantDoubleEquality(1e-4f)
 

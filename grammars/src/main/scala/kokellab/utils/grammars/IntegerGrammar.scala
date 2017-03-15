@@ -68,15 +68,11 @@ class IntegerGrammar(val input: ParserInput, val functions: Map[String, Seq[Int]
 	def parentheses = rule { '(' ~ expression ~ ')' }
 
 	def number: Rule1[Int] = rule {
-		capture(optional(anyOf("-−")) ~ (floatingPoint | integer)) ~> ((s: String) => s.toInt)
+		capture(optional(anyOf("-−")) ~ integer) ~> ((s: String) => s.toInt)
 	}
 
 	def integer: Rule0 = rule {
 		oneOrMore(CharPredicate.Digit)
-	}
-
-	def floatingPoint: Rule0 = rule {
-		oneOrMore(CharPredicate.Digit) ~  ch('.') ~ oneOrMore(CharPredicate.Digit)
 	}
 
 	def fraction: Rule0 = rule { ch('.') ~ oneOrMore(CharPredicate.Digit) }
