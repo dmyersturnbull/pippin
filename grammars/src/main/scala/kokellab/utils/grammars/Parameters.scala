@@ -13,18 +13,15 @@ import scala.util.matching.Regex
   */
 object Parameterizations {
 
-	def mapValuesOntoGrid(range: String, valueExpression: String, substitutionsText: String, nRows: Int, nColumns: Int,
-						  defaultValue: String = "", randBasis: Option[RandBasis] = None
+	def mapValuesOntoGrid(range: String, valueExpression: String, substitutionsText: String, nRows: Int, nColumns: Int, grammarFn: String => Option[String],
+						  defaultValue: String = "", failOnUnexpected: Boolean = false
 						 ): Map[PointLike, String] = {
 		val cells: Seq[PointLike] = GridRangeGrammar.eval(range, nRows, nColumns)
-		val tuple = mapIndexToValue(cells map (_.index), valueExpression, substitutionsText) match {
+		val tuple = mapIndexToValue(cells map (_.index), valueExpression, substitutionsText, failOnUnexpected = failOnUnexpected) match {
 			case Left(singleExpression) =>
 				cells map { cell => cell -> {
 					val replaced = DollarSignParams.substitute(singleExpression, Map("$r" -> cell.row.toString, "$c" -> cell.column.toString, "$i" -> cell.index.toString))
-					IfElseRealNumberGrammar.eval(replaced, randBasis = randBasis) match {
-						case None => defaultValue
-						case Some(v) => v.toString
-					}
+					grammarFn(replaced) getOrElse defaultValue
 				}}
 			case Right(manyValues) => cells zip manyValues
 		}
@@ -39,13 +36,13 @@ object Parameterizations {
 	  * @param pattern
 	  * @return just a String if the value applies to everything in the range; a list otherwise
 	  */
-	def mapIndexToValue(range: Seq[Int], valueExpression: String, substitutionsText: String, pattern: Pattern = Pattern.compile(".*")): Either[String, Seq[String]] = {
+	def mapIndexToValue(range: Seq[Int], valueExpression: String, substitutionsText: String, failOnUnexpected: Boolean = false, pattern: Pattern = Pattern.compile(".*")): Either[String, Seq[String]] = {
 
 		val valueParams = DollarSignParams.find(valueExpression, Set.empty)
 		val lengths = (valueParams map {p =>
 			if (p.isList) p.name -> range.size else p.name -> 1
 		}).toMap
-		val substitutions: Map[Param, DollarSignSub] = parse(substitutionsText, valueParams.toSet, lengths, pattern)
+		val substitutions: Map[Param, DollarSignSub] = parse(substitutionsText, valueParams, lengths, failOnUnexpected, pattern)
 
 		/*
 		Note that we've checked the lengths above. We don't need to verify the substitutions object after that.
@@ -66,7 +63,7 @@ object Parameterizations {
 		}
 	}
 
-	def parse(originalText: String, pars: Set[DollarSignParam], lengths: Map[String, Int], pattern: Pattern = Pattern.compile(".*")): Map[Param, DollarSignSub] = {
+	def parse(originalText: String, params: Set[DollarSignParam], lengths: Map[String, Int], failOnUnexpected: Boolean = false, pattern: Pattern = Pattern.compile(".*")): Map[Param, DollarSignSub] = {
 
 		val multiLineArrayPattern = """=\s*\[\s*\n([^\]]*)\n\s*\]""".r
 
@@ -79,22 +76,26 @@ object Parameterizations {
 		val text = multiLineArrayPattern.replaceAllIn(originalText, m => "= [" + middle(m.group(1)) + "]")
 
 		text.split("\n") flatMap { s =>
-			if (s.trim.isEmpty) None else Some {
+			if (s.trim.isEmpty) None else {
 				if (!(s contains '=')) throw new GrammarException(s"Non-empty line $s does not contain an equals sign")
 				val key = s.substring(0, s.indexOf('=')).trim
 				val value = s.substring(s.indexOf('=') + 1).trim
-				if (!(pars exists (p => p.name == key))) throw new GrammarException(s"A parameter in '$text' is not defined")
-				val param = pars.find(p => p.name == key).get
-				if (param.isList) {
-					if (!(value startsWith "[") || !(value endsWith "]")) throw new GrammarException(s"The parameter ${param.name} is a list type, but '$value' is not enclosed in []")
-					val zs = value.substring(1, value.length - 1) split "," map (_.trim)
-					assert(lengths contains param.name, s"Length is missing for parameter $param")
-					if (lengths(param.name) != zs.length) throw new GrammarException(s"The parameter ${param.name} has length ${lengths(param.name)}, but the value '$value' has length ${zs.length}")
-					if (!(zs forall (z => pattern.matcher(z).matches))) throw new GrammarException(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
-					DollarSignSub(param, zs.toList, true)
-				} else {
-					if (!pattern.matcher(value).matches()) throw new GrammarException(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
-					DollarSignSub(param, List(value), false)
+				if (!(params exists (p => p.name == key))) {
+					if (failOnUnexpected) throw new GrammarException(s"A parameter in '$text' is not defined")
+					else None
+				} else Some{
+					val param = params.find(p => p.name == key).get
+					if (param.isList) {
+						if (!(value startsWith "[") || !(value endsWith "]")) throw new GrammarException(s"The parameter ${param.name} is a list type, but '$value' is not enclosed in []")
+						val zs = value.substring(1, value.length - 1) split "," map (_.trim)
+						assert(lengths contains param.name, s"Length is missing for parameter $param")
+						if (lengths(param.name) != zs.length) throw new GrammarException(s"The parameter ${param.name} has length ${lengths(param.name)}, but the value '$value' has length ${zs.length}")
+						if (!(zs forall (z => pattern.matcher(z).matches))) throw new GrammarException(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
+						DollarSignSub(param, zs.toList, true)
+					} else {
+						if (!pattern.matcher(value).matches()) throw new GrammarException(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
+						DollarSignSub(param, List(value), false)
+					}
 				}
 			}
 		}
