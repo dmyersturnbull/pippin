@@ -27,6 +27,11 @@ class ParametersTest extends PropSpec with TableDrivenPropertyChecks with Matche
 		))
 	}
 
+	property(s"Parse empty") {
+		val results = Parameterizations.parse("", Set(DollarSignParam("$a", false), DollarSignParam("$b", false), DollarSignParam("$...c", false)), Map("$...c" -> 4))
+		(results map (r => (r._1.name, r._2.values))) should equal (Map.empty)
+	}
+
 	property(s"Parse with multiline array") {
 		val results = Parameterizations.parse(
 			"""
@@ -56,8 +61,8 @@ $...d = [
 	}
 
 	property("map values onto grid") {
-		Parameterizations.mapValuesOntoGrid("A1-A5", "$c+$abc", "$abc = 50", 4, 8, IfElseIntegerGrammar.eval, 0) map (z => z._1.index -> z._2) should equal (Map(1 -> 51, 2 -> 52, 3 -> 53, 4 -> 54, 5 -> 55))
-		Parameterizations.mapValuesOntoGrid("A1*C2", "$abc + 10*$r + $c", "$abc = 10", 4, 8, IfElseIntegerGrammar.eval, 0) map (z => (z._1.row, z._1.column) -> z._2) should equal (
+		Parameterizations.mapValuesOntoGrid("A1-A5", "$c+$abc", "$abc = 50", 4, 8, IfElseIntegerGrammar.eval) map (z => z._1.index -> z._2) should equal (Map(1 -> 51, 2 -> 52, 3 -> 53, 4 -> 54, 5 -> 55))
+		Parameterizations.mapValuesOntoGrid("A1*C2", "$abc + 10*$r + $c", "$abc = 10", 4, 8, IfElseIntegerGrammar.eval) map (z => (z._1.row, z._1.column) -> z._2) should equal (
 			Map((1,1) -> 21, (1,2)-> 22, (2,1) -> 31, (2,2)-> 32, (3,1) -> 41, (3,2)-> 42)
 		)
 	}

@@ -12,7 +12,7 @@ object TimeSeriesGrammar {
 			  randBasis: Option[RandBasis] = None, defaultValue: Double = 0.0, tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE
 			 ): Seq[Double] = {
 		val (value, interval) = extract(expression)
-		new TimeSeriesGrammar(value, start, stop, randBasis, evaluationInterval = interval).build()
+		new TimeSeriesGrammar(value, start, stop, randBasis, interval, defaultValue, tolerance).build()
 	}
 
 	private val mainPattern = """ *(.*?) *(?: +(?:evaluate every)|@ +(\d+))?""".r
@@ -53,7 +53,8 @@ class TimeSeriesGrammar(expression: String, start: Int, stop: Int,
 			val tReplaced = tPattern.replaceAllIn(string, i.toString)
 			tArrayPattern.replaceAllIn(tReplaced, arrayAccessReplacer)
 		}
-
+		https://www.chemspider.com/ImagesHandler.ashx?id=368395&w=250&h=250
+		https://www.chemspider.com/ImagesHandler.ashx?id=973&w=250&h=250
 		// calculates the if-elif-else expression for an index, replacing $t and $t[index] as needed
 		def calculate(i: Int): Double =
 			IfElseRealNumberGrammar.eval(substitute(expression, i), tolerance = tolerance, randBasis = randBasis).getOrElse(defaultValue)
