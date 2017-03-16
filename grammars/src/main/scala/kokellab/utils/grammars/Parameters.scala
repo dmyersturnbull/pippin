@@ -13,10 +13,10 @@ import scala.util.matching.Regex
   */
 object Parameterizations {
 
-	def mapValuesOntoGrid[A](range: String, valueExpression: String, substitutionsText: String, nRows: Int, nColumns: Int, grammarFn: String => Option[A], failOnUnexpected: Boolean = false
+	def mapValuesOntoGrid[A](range: String, valueExpression: String, substitutionsText: String, nRows: Int, nColumns: Int, grammarFn: String => Option[A], failOnUnexpected: Boolean = false, quote: Boolean = false
 						 ): Map[PointLike, A] = {
 		val cells: Seq[PointLike] = GridRangeGrammar.eval(range, nRows, nColumns)
-		val tuple = mapIndexToValue(cells map (_.index), valueExpression, substitutionsText, failOnUnexpected = failOnUnexpected) match {
+		val tuple = mapIndexToValue(cells map (_.index), valueExpression, substitutionsText, failOnUnexpected = failOnUnexpected, quote = quote) match {
 			case Left(singleExpression) =>
 				cells flatMap { cell => {
 					val replaced = DollarSignParams.substitute(singleExpression, Map("$r" -> cell.row.toString, "$c" -> cell.column.toString, "$i" -> cell.index.toString))
@@ -36,13 +36,13 @@ object Parameterizations {
 	  * @param pattern
 	  * @return just a String if the value applies to everything in the range; a list otherwise
 	  */
-	def mapIndexToValue(range: Seq[Int], valueExpression: String, substitutionsText: String, failOnUnexpected: Boolean = false, pattern: Pattern = Pattern.compile(".*")): Either[String, Seq[String]] = {
+	def mapIndexToValue(range: Seq[Int], valueExpression: String, substitutionsText: String, failOnUnexpected: Boolean = false, quote: Boolean = false, pattern: Pattern = Pattern.compile(".*")): Either[String, Seq[String]] = {
 
 		val valueParams = DollarSignParams.find(valueExpression, Set.empty)
 		val lengths = (valueParams map {p =>
 			if (p.isList) p.name -> range.size else p.name -> 1
 		}).toMap
-		val substitutions: Map[Param, DollarSignSub] = parse(substitutionsText, valueParams, lengths, failOnUnexpected, pattern)
+		val substitutions: Map[Param, DollarSignSub] = parse(substitutionsText, valueParams, lengths, failOnUnexpected, quote, pattern)
 
 		/*
 		Note that we've checked the lengths above. We don't need to verify the substitutions object after that.
@@ -63,7 +63,9 @@ object Parameterizations {
 		}
 	}
 
-	def parse(originalText: String, params: Set[DollarSignParam], lengths: Map[String, Int], failOnUnexpected: Boolean = false, pattern: Pattern = Pattern.compile(".*")): Map[Param, DollarSignSub] = {
+	def parse(originalText: String, params: Set[DollarSignParam], lengths: Map[String, Int], failOnUnexpected: Boolean = false, quote: Boolean = false, pattern: Pattern = Pattern.compile(".*")): Map[Param, DollarSignSub] = {
+
+		def quoteIfNeeded(s: String): String = if (quote && !s.startsWith("\"") && !s.endsWith("\"")) "\"" + s + "\"" else s
 
 		val multiLineArrayPattern = """=\s*\[\s*\n([^\]]*)\n\s*\]""".r
 
@@ -87,19 +89,20 @@ object Parameterizations {
 					val param = params.find(p => p.name == key).get
 					if (param.isList) {
 						if (!(value startsWith "[") || !(value endsWith "]")) throw new GrammarException(s"The parameter ${param.name} is a list type, but '$value' is not enclosed in []")
-						val zs = value.substring(1, value.length - 1) split "," map (_.trim)
+						val zs = value.substring(1, value.length - 1) split "," map (_.trim) map quoteIfNeeded
 						assert(lengths contains param.name, s"Length is missing for parameter $param")
 						if (lengths(param.name) != zs.length) throw new GrammarException(s"The parameter ${param.name} has length ${lengths(param.name)}, but the value '$value' has length ${zs.length}")
 						if (!(zs forall (z => pattern.matcher(z).matches))) throw new GrammarException(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
 						DollarSignSub(param, zs.toList, true)
 					} else {
 						if (!pattern.matcher(value).matches()) throw new GrammarException(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
-						DollarSignSub(param, List(value), false)
+						DollarSignSub(param, List(quoteIfNeeded(value)), false)
 					}
 				}
 			}
 		}
 	} groupBy (_.key) mapValues (_.head)
+
 
 }
 
