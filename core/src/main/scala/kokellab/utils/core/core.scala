@@ -5,8 +5,10 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.security.MessageDigest
 import java.sql.Blob
+import java.util.concurrent.{ConcurrentMap, TimeUnit}
 import javax.sql.rowset.serial.SerialBlob
 
+import com.google.common.cache.CacheBuilder
 import com.google.common.io.{BaseEncoding, ByteStreams}
 import com.typesafe.config.{Config, ConfigException, ConfigFactory, ConfigParseOptions}
 import com.typesafe.scalalogging.LazyLogging
@@ -83,5 +85,19 @@ package object core extends LazyLogging {
 	def thisGitCommitSha1Hex = ("git rev-parse HEAD" !!).trim
 
 	def thisGitCommitSha1Bytes = hexToBytes(("git rev-parse HEAD" !!).trim)
+
+	def buildCache[K <: AnyRef, V <: AnyRef](maxSize: Int = 1000,
+											 expireAfterReadSeconds: Int = Int.MaxValue, expireAfterWriteSeconds: Int = Int.MaxValue
+											): ConcurrentMap[K, V] =
+		CacheBuilder.newBuilder()
+			.maximumSize(maxSize)
+			.expireAfterWrite(expireAfterReadSeconds, TimeUnit.SECONDS)
+			.expireAfterAccess(expireAfterReadSeconds, TimeUnit.SECONDS)
+			.concurrencyLevel(1)
+			.build[K, V]().asMap()
+
+	def trimWhitespaceAndQuotes(string: String): String = {
+		string.trim.stripPrefix("\"").stripSuffix("\"")
+	}
 
 }
