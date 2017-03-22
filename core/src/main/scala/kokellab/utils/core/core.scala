@@ -1,8 +1,9 @@
 package kokellab.utils
 
 import sys.process._
-import java.io.File
+import java.io.{File, InputStream}
 import java.nio.ByteBuffer
+import java.nio.file.{Files, Path}
 import java.security.MessageDigest
 import java.sql.Blob
 import java.util.concurrent.{ConcurrentMap, TimeUnit}
@@ -99,5 +100,28 @@ package object core extends LazyLogging {
 	def trimWhitespaceAndQuotes(string: String): String = {
 		string.trim.stripPrefix("\"").stripSuffix("\"")
 	}
+
+
+	def wrapFileInputStream(file: Path, task: InputStream => Unit): Unit = {
+		val stream: InputStream = null
+		try {
+			task(Files.newInputStream(file))
+		} finally {
+			if (stream != null) stream.close()
+		}
+	}
+
+	def readFileInChunks(file: Path, task: Array[Byte] => Unit) =
+		wrapFileInputStream(file, stream => readStreamInChunks(stream, task))
+
+	def readStreamInChunks(stream: InputStream, task: Array[Byte] => Unit, kbInBuffer: Int = 1024) = {
+		var status: Int = 1
+		var buffer: Array[Byte] = Array.ofDim(kbInBuffer * 1024)
+		while (status > -1) {
+			status = stream.read(buffer)
+			task(buffer.slice(0, status))
+		}
+	}
+
 
 }
