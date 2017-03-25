@@ -3,16 +3,17 @@ package kokellab.utils.grammars
 import breeze.stats.distributions.RandBasis
 
 import scala.collection._
+import scala.reflect.ClassTag
 import scala.util.{Failure, Success, Try}
 import scala.util.matching.Regex.Match
 
 object TimeSeriesGrammar {
 
-	def build(expression: String, start: Int, stop: Int,
-			  randBasis: Option[RandBasis] = None, defaultValue: Double = 0.0, tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE
-			 ): Seq[Double] = {
+	def build[A : ClassTag](expression: String, start: Int, stop: Int, converter: Double => A,
+			  randBasis: Option[RandBasis] = None, defaultValue: Byte = 0, tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE
+			 ): Array[A] = {
 		val (value, interval) = extract(expression)
-		new TimeSeriesGrammar(value, start, stop, randBasis, interval, defaultValue, tolerance).build()
+		new TimeSeriesGrammar(value, start, stop, converter, randBasis, interval, defaultValue, tolerance).build()
 	}
 
 	private val mainPattern = """ *(.*?) *(?: +(?:evaluate every)|@ +(\d+))?""".r
@@ -28,48 +29,61 @@ object TimeSeriesGrammar {
 	}
 }
 
-class TimeSeriesGrammar(expression: String, start: Int, stop: Int,
-						randBasis: Option[RandBasis] = None, evaluationInterval: Int = 1, defaultValue: Double = 0.0, tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE) {
+class TimeSeriesGrammar[@specialized(Float, Double, Byte, Short, Int) A : ClassTag](expression: String, start: Int, stop: Int, converter: Double => A,
+						randBasis: Option[RandBasis] = None, evaluationInterval: Int = 1, defaultValue: Double = 0, tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE) {
 
 	private val tPattern = """\$t(?![\[A-Za-z0-9_])""".r
 	private val tArrayPattern = """\$t\[([^\]]+)\]""".r
 
-	def build(): Seq[Double] = {
+	def build(): Array[A] = {
+
+		if (Try(converter(expression.toDouble)).isSuccess) {
+			return Array.fill[A](stop - start)(converter(expression.toDouble))
+		}
 
 		// we're going to build this up and access it with $t[index] as needed
-		var values = mutable.ListBuffer.empty[Double]
+		var values: Array[A] = Array.ofDim[A](stop - start)
 
 		// replaces any single $t[index] with index evaluated by the RealNumberGrammar, whose result is truncated to Int
+
 		def arrayAccessReplacer = (m: Match) => {
 			// NOTE: truncates to Int!
 			val index = RealNumberGrammar.eval(m.group(1), randBasis).toInt
-			if (index > -1 && index < values.size) values(index).toString
+			if (index > -1 && index < values.length) values(index).toString
 			else defaultValue.toString
 		}
 
-		def substitute = (string: String, i: Int) => {
-			// substitute $t and then $t[index]
-			// the order is essential so that the array index can reference $t
-			val tReplaced = tPattern.replaceAllIn(string, i.toString)
-			tArrayPattern.replaceAllIn(tReplaced, arrayAccessReplacer)
+		val substitute = if (expression contains '[') {
+			(string: String, i: Int) => {
+				// substitute $t and then $t[index]
+				// the order is essential so that the array index can reference $t
+				val tReplaced = tPattern.replaceAllIn(string, i.toString)
+				tArrayPattern.replaceAllIn(tReplaced, arrayAccessReplacer)
+			}
+		} else if (expression contains '$') {
+			(string: String, i: Int) => tPattern.replaceAllIn(string, i.toString)
+		} else {
+			(string: String, i: Int) => string
 		}
 
 		// calculates the if-elif-else expression for an index, replacing $t and $t[index] as needed
-		def calculate(i: Int): Double =
-			IfElseRealNumberGrammar.eval(substitute(expression, i), tolerance = tolerance, randBasis = randBasis).getOrElse(defaultValue)
+		val calculate: Int => Double = if (expression containsSlice "if") {
+			i: Int => IfElseRealNumberGrammar.eval(substitute(expression, i), tolerance = tolerance, randBasis = randBasis).getOrElse(defaultValue)
+		} else {
+			i: Int => RealNumberGrammar.eval(substitute(expression, i), randBasis = randBasis)
+		}
 
-		var lastValue = 0.0
-		for (i <- start to stop) {
-			values += {
-				if (i == start || i % evaluationInterval == 0)
+		var lastValue: A = converter(0.0)
+		for (i <- start until stop) {
+			values(i) = {
+				if (i % evaluationInterval == 0 || i == start) converter{
+					lastValue = values.last
 					calculate(i)
-				else lastValue
+				} else lastValue
 			}
-			lastValue = values.last
 		}
 
 		values
 	}
-
 
 }
