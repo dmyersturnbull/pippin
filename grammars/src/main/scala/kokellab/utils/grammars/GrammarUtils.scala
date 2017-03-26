@@ -18,5 +18,5 @@ object GrammarUtils {
 					Some(parser.formatError(e, new ErrorFormatter(showExpected = true, showFrameStartOffset = true, showLine = true, showPosition = true, showTraces = true))), Some(e))
 		}
 
-	private val commonReplacements = Map(" " -> "", "!=" -> "≠", "<=" -> "≤", ">=" -> "≥", "==" -> "=", "~=" -> "≈", "!~=" -> "≉")
+	private val commonReplacements = Map(" " -> "", "−" -> "-", "!=" -> "≠", "<=" -> "≤", ">=" -> "≥", "==" -> "=", "~=" -> "≈", "!~=" -> "≉", "∞" -> "Infinity", "infinity" -> "Infinity", "inf" -> "Infinity", "Inf" -> "Infinity")
 }

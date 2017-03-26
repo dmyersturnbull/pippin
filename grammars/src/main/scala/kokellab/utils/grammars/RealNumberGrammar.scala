@@ -70,20 +70,22 @@ class RealNumberGrammar(val input: ParserInput,
 						functions: Map[String, Seq[Double] => Double] = RealNumberGrammar.defaultFunctionMap
 					   ) extends Parser {
 
-	def realNumberLine = rule { expression ~ EOI }
+	def realNumberLine = rule {
+		expression ~ EOI
+	}
 
 	def expression: Rule1[Double] = rule {
 		term ~ zeroOrMore(
 			'+' ~ term ~> ((_: Double) + _)
-			| (ch('-')|'−') ~ term ~> ((_: Double) - _)
+					| (ch('-') | '−') ~ term ~> ((_: Double) - _)
 		)
 	}
 
 	def term: Rule1[Double] = rule {
 		factor ~ zeroOrMore(
 			(ch('*') | '×') ~ factor ~> ((_: Double) * _)
-			| '/' ~ factor ~> ((_: Double) / _)
-			| '%' ~ factor ~> ((_: Double) % _)
+					| '/' ~ factor ~> ((_: Double) / _)
+					| '%' ~ factor ~> ((_: Double) % _)
 		)
 	}
 
@@ -95,7 +97,8 @@ class RealNumberGrammar(val input: ParserInput,
 	  * This is the evaluated value of a function call
 	  */
 	def function: Rule1[Double] = rule {
-		capture(functionName) ~ parameterList ~> (((fn: String), (e: Seq[Double])) => {
+		capture(functionName) ~ parameterList ~> (((fn: String), (e: Seq[Double])) =>
+		{
 			if (functions contains fn) {
 				try {
 					functions(fn)(e)
@@ -114,10 +117,16 @@ class RealNumberGrammar(val input: ParserInput,
 		'(' ~ oneOrMore(expression).separatedBy(",") ~ ')'
 	}
 
-	def parentheses = rule { '(' ~ expression ~ ')' }
+	def parentheses = rule {
+		'(' ~ expression ~ ')'
+	}
 
 	def number: Rule1[Double] = rule {
-		capture(optional(anyOf("-−")) ~ (floatingPoint | integer)) ~> ((s: String) => s.toDouble)
+		capture(optional('-') ~ (expNotation | floatingPoint | integer | inf | nan)) ~> ((s: String) => s.toDouble)
+	}
+
+	def expNotation: Rule0 = rule {
+		(floatingPoint | integer) ~ "E" ~ optional(anyOf("-−+")) ~ integer
 	}
 
 	def integer: Rule0 = rule {
@@ -125,9 +134,13 @@ class RealNumberGrammar(val input: ParserInput,
 	}
 
 	def floatingPoint: Rule0 = rule {
-		oneOrMore(CharPredicate.Digit) ~  ch('.') ~ oneOrMore(CharPredicate.Digit)
+		oneOrMore(CharPredicate.Digit) ~ ch('.') ~ oneOrMore(CharPredicate.Digit)
 	}
 
-	def fraction: Rule0 = rule { ch('.') ~ oneOrMore(CharPredicate.Digit) }
+	def fraction: Rule0 = rule {
+		ch('.') ~ oneOrMore(CharPredicate.Digit)
+	}
 
+	def nan: Rule0 = rule { "NaN" }
+	def inf: Rule0 = rule { "Infinity" }
 }
