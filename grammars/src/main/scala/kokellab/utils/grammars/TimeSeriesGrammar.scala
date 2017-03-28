@@ -62,9 +62,9 @@ class TimeSeriesGrammar[@specialized(Float, Double, Byte, Short, Int) A : ClassT
 			Iterator.fill[A](stop - start)(converter(expression.toDouble))
 		} else if (expression contains '[') {
 			buildWithArrayAccess()
-		} else if (expression contains "$") {
+		} else {
 			buildStreaming()
-		} else throw new AssertionError()
+		}
 
 	}
 

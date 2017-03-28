@@ -126,7 +126,7 @@ class RealNumberGrammar(val input: ParserInput,
 	}
 
 	def expNotation: Rule0 = rule {
-		(floatingPoint | integer) ~ "E" ~ optional(anyOf("-−+")) ~ integer
+		(floatingPoint | integer) ~ "E" ~ optional(anyOf("-+")) ~ integer
 	}
 
 	def integer: Rule0 = rule {
