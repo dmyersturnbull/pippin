@@ -21,10 +21,4 @@ class SquintsTest extends PropSpec with TableDrivenPropertyChecks with Matchers 
 		squinter("5.23E-02 µh") should equal (Hours(5.23E-8))
 	}
 
-	property(s"Default") {
-		Squinter.micromolars("5.2 M") should equal (Molars(5.2))
-		Squinter.micromolars("5") should equal (Molars(5) * MetricSystem.Micro)
-		Squinter.milliseconds("5.2e3 mh") should equal (Hours(5.2e3 / 1000))
-	}
-
 }
