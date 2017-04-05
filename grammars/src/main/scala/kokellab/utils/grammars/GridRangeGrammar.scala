@@ -5,7 +5,7 @@ import org.parboiled2._
 
 object GridRangeGrammar {
 	def eval(input: String, nRows: Int, nColumns: Int): Seq[PointLike] = {
-		val parser = new GridRangeGrammar(input, AlphanumericGrid(nRows, nColumns))
+		val parser = new GridRangeGrammar(input.replaceAllLiterally(" ", ""), AlphanumericGrid(nRows, nColumns))
 		try {
 			parser.run().get
 		} catch {
@@ -33,7 +33,7 @@ class GridRangeGrammar(val input: ParserInput, val grid: AlphanumericGrid) exten
 		cell ~ "*" ~ cell ~> ((a: grid.Point, b: grid.Point) => grid.blockRange(a, b))
 	}
 	def traversalRangeRule: Rule1[List[grid.Point]] = rule {
-		cell ~ "..." ~ cell ~> ((a: grid.Point, b: grid.Point) => grid.traversalRange(a, b))
+		cell ~ ("..." | "…") ~ cell ~> ((a: grid.Point, b: grid.Point) => grid.traversalRange(a, b))
 	}
 
 	def cell: Rule1[grid.Point] = rule {

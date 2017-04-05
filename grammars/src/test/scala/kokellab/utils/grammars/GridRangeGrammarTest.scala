@@ -21,7 +21,11 @@ class GridRangeGrammarTest extends PropSpec with TableDrivenPropertyChecks with 
 	}
 	property(s"Traversal range") {
 		val parser = new GridRangeGrammar("A1...C2", AlphanumericGrid(5, 6))
-		parser.run().get.map(_.name) should equal (List("A1", "A2", "A3", "A4", "A5", "B1", "B2", "B3", "B4", "B5", "C1", "C2"))
+		parser.run().get.map(_.name) should equal (List("A1", "A2", "A3", "A4", "A5", "A6", "B1", "B2", "B3", "B4", "B5", "B6", "C1", "C2"))
+	}
+	property(s"Traversal range at end") {
+		val parser = new GridRangeGrammar("A1...D2", AlphanumericGrid(4, 2))
+		parser.run().get.map(_.name) should equal (List("A1", "A2", "B1", "B2", "C1", "C2", "D1", "D2"))
 	}
 
 }

@@ -26,7 +26,10 @@ trait GridLike {
 
 	def traversalRange[P <: PointLike](a: P, b: P)(implicit gen: (Int, Int) => P) = {
 		require(a.index <= b.index, "Point $a > $b in traversal range")
-		for (i <- a.index to nColumns + b.index if i / nColumns > 0 && i % nColumns > 0) yield gen(i / nColumns, i % nColumns)
+		for (i <- a.index to b.index) yield {
+			val z = i - 1
+			gen(z / nColumns + 1, z % nColumns + 1)
+		}
 	}.toList
 }
 
