@@ -9,6 +9,10 @@ class TimeSeriesGrammarTest extends PropSpec with TableDrivenPropertyChecks with
 	import scala.reflect._
 	val randBasis = Some(GrammarUtils.randBasis(1))
 
+	property(s"Just t") {
+		TimeSeriesGrammar.build[Double]("$t", 0, 5, d=>d, randBasis) should equal (Seq(0.0, 1.0, 2.0, 3.0, 4.0))
+	}
+
 	property(s"Simple") {
 		TimeSeriesGrammar.build[Double]("3+$t/2", 0, 5, d=>d, randBasis) should equal (Seq(3.0, 3.5, 4.0, 4.5, 5.0))
 	}
@@ -49,14 +53,12 @@ class TimeSeriesGrammarTest extends PropSpec with TableDrivenPropertyChecks with
 		assert(TimeSeriesGrammar.build[Double]("$t[$t-2]", 0, 5, d=>d, randBasis).toSeq forall (_.isNaN))
 	}
 
-	/*
-		property(s"Stress test 1") {
-			TimeSeriesGrammar.build("if $t=0: 100 else: max(0, min(200, $t[$t-1] + normR(5, 200) / ($t+1)))", 0, 1209600000, randomBasis = randBasis) foreach println
-		}
+//	property(s"Stress test 1") {
+//		TimeSeriesGrammar.build("if $t=0: 100 else: max(0, min(200, $t[$t-1] + normR(5, 200) / ($t+1)))", 0, 1209600000, randomBasis = randBasis) foreach println
+//	}
 
-		property(s"Stress test 2") {
-			TimeSeriesGrammar.build[Byte]("$t", 0, 1000*60*60*24, _.toByte, randBasis)
-		}
-	*/
+//	property(s"Stress test 2") {
+//		TimeSeriesGrammar.build[Byte]("$t  @ 40", 0, 1000*60*60*20, _.toByte, randBasis)
+//	}
 
 }
