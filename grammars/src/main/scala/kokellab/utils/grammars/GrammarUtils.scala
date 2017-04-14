@@ -14,8 +14,11 @@ object GrammarUtils {
 			parse()
 		} catch {
 			case e: ParseError =>
-				throw new GrammarException(s"The expression $expression could not be parsed",
-					Some(parser.formatError(e, new ErrorFormatter(showExpected = true, showFrameStartOffset = true, showLine = true, showPosition = true, showTraces = true))), Some(e))
+				val formatted = parser.formatError(e, new ErrorFormatter(showExpected = true, showFrameStartOffset = true, showLine = true, showPosition = true, showTraces = true))
+				throw new GrammarException(s"The expression $expression could not be parsed by ${parser.getClass.getSimpleName}",
+					Some(formatted), Some(e))
+			case e: IllegalArgumentException =>
+				throw new GrammarException(s"Error parsing expression $expression by ${parser.getClass.getSimpleName}: ${e.getMessage}", None, Some(e))
 		}
 
 	private val commonReplacements = Map(" " -> "", "−" -> "-", "!=" -> "≠", "<=" -> "≤", ">=" -> "≥", "==" -> "=", "~=" -> "≈", "!~=" -> "≉", "∞" -> "Infinity", "infinity" -> "Infinity", "inf" -> "Infinity", "Inf" -> "Infinity")

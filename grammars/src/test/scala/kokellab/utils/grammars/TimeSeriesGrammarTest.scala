@@ -46,7 +46,7 @@ class TimeSeriesGrammarTest extends PropSpec with TableDrivenPropertyChecks with
 	}
 
 	property(s"Bounded submartingale") {
-		val z = TimeSeriesGrammar.build[Double]("if $t=0: 100 else: max(0, min(200, $t[$t-1] + normR(5, 200) / ($t+1)))", 0, 100, d=>d, randBasis) foreach println
+		val z = TimeSeriesGrammar.build[Double]("if $t=0: 100 else: max(0, min(200, $t[$t-1] + normR(5, 200) / ($t+1)))", 0, 100, d=>d, randBasis)// foreach println
 	}
 
 	property(s"Out-of-bounds") {
