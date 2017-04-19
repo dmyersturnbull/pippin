@@ -35,7 +35,7 @@ class Squinter[A <: Quantity[A]](
 		val united = if (allowedUnits exists (u => s endsWith u)) s else s + " " + defaultUnit
 		united match {
 			case pattern(amount: String, prefix: String, unit: String) =>
-				val value: Double = (prefixMap get prefix map (d => d.factor * amount.toDouble)) getOrElse 1.0
+				val value: Double = (prefixMap get prefix map (d => d.factor * amount.toDouble)) getOrElse amount.toDouble
 				parser(s"$value $unit") match {
 					case Success(v) => v
 					case Failure(e) =>

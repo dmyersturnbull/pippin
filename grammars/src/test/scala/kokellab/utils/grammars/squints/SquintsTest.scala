@@ -1,11 +1,12 @@
 package kokellab.utils.grammars.squints
 
 import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.time.Millisecond
 import org.scalatest.{Matchers, PropSpec}
 import squants.MetricSystem
 import squants.mass.{ChemicalAmount, Molars, Moles, SubstanceConcentration}
 import squants.space.Inches
-import squants.time.{Hours, Seconds, Time}
+import squants.time.{Hours, Milliseconds, Seconds, Time}
 
 class SquintsTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
 
@@ -19,6 +20,14 @@ class SquintsTest extends PropSpec with TableDrivenPropertyChecks with Matchers 
 		squinter("5 Gs") should equal (Seconds(5) * MetricSystem.Giga)
 		squinter("5E6 ms") should equal (Seconds(5000))
 		squinter("5.23E-02 µh") should equal (Hours(5.23E-8))
+	}
+
+	property("Time without a prefix or units") {
+		val squinter: Squinter[Time] = new Squinter(Time.apply(_), Set("s", "m", "h"), numberParser = _.toInt, defaultUnit = "ms", numberPattern = Squinter.nonnegativeDoublePattern,
+			siPrefixes = List(SiPrefix.milli, SiPrefix.kilo))
+		squinter("7s") should equal (Seconds(7))
+		squinter("7 s") should equal (Seconds(7))
+		squinter("7") should equal (Milliseconds(7))
 	}
 
 }
