@@ -9,16 +9,20 @@ class TimeSeriesGrammarTest extends PropSpec with TableDrivenPropertyChecks with
 	import scala.reflect._
 	val randBasis = Some(GrammarUtils.randBasis(1))
 
+	property(s"Constant") {
+		TimeSeriesGrammar.build[Double]("5", 0, 5, d=>d, randBasis).toSeq should equal (Seq(5, 5, 5, 5, 5))
+	}
+
 	property(s"Just t") {
-		TimeSeriesGrammar.build[Double]("$t", 0, 5, d=>d, randBasis) should equal (Seq(0.0, 1.0, 2.0, 3.0, 4.0))
+		TimeSeriesGrammar.build[Double]("$t", 0, 5, d=>d, randBasis).toSeq should equal (Seq(0.0, 1.0, 2.0, 3.0, 4.0))
 	}
 
 	property(s"Simple") {
-		TimeSeriesGrammar.build[Double]("3+$t/2", 0, 5, d=>d, randBasis) should equal (Seq(3.0, 3.5, 4.0, 4.5, 5.0))
+		TimeSeriesGrammar.build[Double]("3+$t/2", 0, 5, d=>d, randBasis).toSeq should equal (Seq(3.0, 3.5, 4.0, 4.5, 5.0))
 	}
 
 	property(s"If-else") {
-		TimeSeriesGrammar.build[Double]("if $t<3: $t else: 100", 0, 5, d=>d, randBasis) should equal (Seq(0.0, 1.0, 2.0, 100.0, 100.0))
+		TimeSeriesGrammar.build[Double]("if $t<3: $t else: 100", 0, 5, d=>d, randBasis).toSeq should equal (Seq(0.0, 1.0, 2.0, 100.0, 100.0))
 	}
 
 	property(s"Array access") {

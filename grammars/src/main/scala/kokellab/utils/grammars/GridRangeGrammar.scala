@@ -23,7 +23,7 @@ class GridRangeGrammar(val input: ParserInput, val grid: AlphanumericGrid) exten
 	def run() = rangeRule.run()
 
 	def rangeRule: Rule1[List[grid.Point]] = rule {
-		(simpleRangeRule | blockRangeRule | traversalRangeRule) ~ EOI
+		(simpleRangeRule | blockRangeRule | traversalRangeRule | singleRule) ~ EOI
 	}
 
 	def simpleRangeRule: Rule1[List[grid.Point]] = rule {
@@ -34,6 +34,9 @@ class GridRangeGrammar(val input: ParserInput, val grid: AlphanumericGrid) exten
 	}
 	def traversalRangeRule: Rule1[List[grid.Point]] = rule {
 		cell ~ ("..." | "…") ~ cell ~> ((a: grid.Point, b: grid.Point) => grid.traversalRange(a, b))
+	}
+	def singleRule: Rule1[List[grid.Point]] = rule {
+		cell ~> ((a: grid.Point) => List(a))
 	}
 
 	def cell: Rule1[grid.Point] = rule {

@@ -7,6 +7,10 @@ import org.scalactic.TolerantNumerics
 
 class GridRangeGrammarTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
 
+	property(s"Only one") {
+		val parser = new GridRangeGrammar("A1", AlphanumericGrid(5, 6))
+		parser.run().get.map(_.name) should equal (List("A1"))
+	}
 	property(s"Simple range horizontal") {
 		val parser = new GridRangeGrammar("A1-A4", AlphanumericGrid(5, 6))
 		parser.run().get.map(_.name) should equal (List("A1", "A2", "A3", "A4"))
