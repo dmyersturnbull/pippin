@@ -33,6 +33,9 @@ trait GridLike {
 	}.toList
 }
 
+/**
+  * Rows, columns, and row–columns indices are all 1-indexed.
+  */
 case class AlphanumericGrid(nRows: Int, nColumns: Int) extends GridLike {
 
 	require(nRows > 0)
@@ -41,7 +44,7 @@ case class AlphanumericGrid(nRows: Int, nColumns: Int) extends GridLike {
 	case class Point(row: Int, column: Int) extends PointLike {
 		require(row > 0 && row <= nRows && column > 0 && column <= nColumns, s"($row, $column) is out of bounds of ($nRows, $nColumns) grid")
 		def this(s: String) = this(stringToRow(s), stringToColumn(s))
-		def this(i: Int) = this(i / nColumns, i % nColumns)
+		def this(i: Int) = this((i-1) / nColumns + 1, (i-1) % nColumns + 1)
 		val index = nColumns*(row-1) + column
 		override val name: String = (row + 'A' - 1).toChar + column.toString
 	}
