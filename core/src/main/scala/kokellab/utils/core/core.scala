@@ -29,6 +29,7 @@ package object core extends LazyLogging {
 		case e: ConfigException.Missing => None
 	}
 
+
 	/** Logs an error message for any exception, then rethrows. */
 	def withLoggedError[T](errorMessage: String, fn: () => T): T = withLoggedError(fn, errorMessage) // helpful for long functions
 
@@ -40,6 +41,7 @@ package object core extends LazyLogging {
 				logger.error(errorMessage, e)
 				throw e
 		}
+
 
 	val sha1 = MessageDigest.getInstance("SHA-1")
 	def bytesToHash(bytes: Traversable[Byte]): Array[Byte] = sha1.digest(bytes.toArray)
@@ -68,6 +70,7 @@ package object core extends LazyLogging {
 	def longsToBytes(values: Traversable[Long]): Traversable[Byte] =
 		values flatMap (value => ByteBuffer.allocate(8).putLong(value).array())
 
+
 	/**
 		* Looks up all of the given keys in the map.
 		* Throws an InvalidDataFormatException if conflicting values are found.
@@ -83,13 +86,16 @@ package object core extends LazyLogging {
 	def uniqueLookup[A, B](keys: Set[A], map: Map[A, B]): B =
 		uniqueLookupOption(keys, map) getOrElse (throw new IllegalArgumentException("No value for keys {${keys.mkString(\",\")}}"))
 
+
 	def thisGitCommitSha1Hex = ("git rev-parse HEAD" !!).trim
 
 	def thisGitCommitSha1Bytes = hexToBytes(("git rev-parse HEAD" !!).trim)
 
-	def buildCache[K <: AnyRef, V <: AnyRef](maxSize: Int = 1000,
-											 expireAfterReadSeconds: Int = Int.MaxValue, expireAfterWriteSeconds: Int = Int.MaxValue
-											): ConcurrentMap[K, V] =
+
+	def buildCache[K <: AnyRef, V <: AnyRef](
+			maxSize: Int = 1000,
+			expireAfterReadSeconds: Int = Int.MaxValue, expireAfterWriteSeconds: Int = Int.MaxValue
+	): ConcurrentMap[K, V] =
 		CacheBuilder.newBuilder()
 			.maximumSize(maxSize)
 			.expireAfterWrite(expireAfterReadSeconds, TimeUnit.SECONDS)
@@ -97,9 +103,9 @@ package object core extends LazyLogging {
 			.concurrencyLevel(1)
 			.build[K, V]().asMap()
 
-	def trimWhitespaceAndQuotes(string: String): String = {
+
+	def trimWhitespaceAndQuotes(string: String): String =
 		string.trim.stripPrefix("\"").stripSuffix("\"")
-	}
 
 
 	def wrapFileInputStream(file: Path, task: InputStream => Unit): Unit = {
@@ -111,8 +117,10 @@ package object core extends LazyLogging {
 		}
 	}
 
+
 	def readFileInChunks(file: Path, task: Array[Byte] => Unit) =
 		wrapFileInputStream(file, stream => readStreamInChunks(stream, task))
+
 
 	def readStreamInChunks(stream: InputStream, task: Array[Byte] => Unit, kbInBuffer: Int = 1024) = {
 		var status: Int = 1
@@ -122,6 +130,5 @@ package object core extends LazyLogging {
 			task(buffer.slice(0, status))
 		}
 	}
-
 
 }

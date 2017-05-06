@@ -5,9 +5,9 @@ description := "Common Scala utilities for the Kokel Lab"
 lazy val commonSettings = Seq(
 	organization := "com.github.kokellab",
 	organizationHomepage := Some(url("https://github.com/kokellab")),
-	version := "0.1.3-SNAPSHOT",
+	version := "0.2.0-SNAPSHOT",
 	isSnapshot := true,
-	scalaVersion := "2.11.8",
+	scalaVersion := "2.12.2",
 	publishMavenStyle := true,
 	publishTo :=
 		Some(if (isSnapshot.value)
@@ -26,16 +26,16 @@ lazy val commonSettings = Seq(
 	scmInfo := Some(ScmInfo(url("https://github.com/kokellab/kl-common-scala"), "https://github.com/kokellab/kl-common-scala.git")),
 	libraryDependencies ++= Seq(
 		"com.typesafe" % "config" % "1.3.0",
-		"com.jsuereth" %% "scala-arm" % "1.4",
-		"com.google.guava" % "guava" % "20.0",
+		"com.jsuereth" %% "scala-arm" % "2.0",
+		"com.google.guava" % "guava" % "21.0",
 		"com.google.code.findbugs" % "jsr305" % "3.0.1", // to work around compiler warnings about missing annotations from Guava
-		"org.slf4j" % "slf4j-api" % "1.7.21",
+		"org.slf4j" % "slf4j-api" % "1.7.25",
 		"com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
-		"ch.qos.logback" %  "logback-classic" % "1.1.7",
-		"org.scalatest" %% "scalatest" % "3.0.0" % "test",
-		"org.scalactic" %% "scalactic" % "3.0.0" % "test",
-		"org.scalacheck" %% "scalacheck" % "1.13.4" % "test",
-		"org.scalamock" %% "scalamock-scalatest-support" % "3.2.2" % "test",
+		"ch.qos.logback" %  "logback-classic" % "1.2.3",
+		"org.scalatest" %% "scalatest" % "3.0.1" % "test",
+		"org.scalactic" %% "scalactic" % "3.0.1" % "test",
+		"org.scalacheck" %% "scalacheck" % "1.13.5" % "test",
+		"org.scalamock" %% "scalamock-scalatest-support" % "3.5.0" % "test",
 		"com.storm-enroute" %% "scalameter-core" % "0.8.2" % "test"
 	),
 	pomExtra :=
