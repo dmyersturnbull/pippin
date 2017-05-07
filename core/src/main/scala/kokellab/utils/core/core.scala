@@ -1,9 +1,9 @@
 package kokellab.utils
 
 import sys.process._
-import java.io.{File, InputStream}
+import java.io.InputStream
 import java.nio.ByteBuffer
-import java.nio.file.{Files, Path}
+import java.nio.file.{Files, Path, Paths}
 import java.security.MessageDigest
 import java.sql.Blob
 import java.util.concurrent.{ConcurrentMap, TimeUnit}
@@ -16,9 +16,9 @@ import com.typesafe.scalalogging.LazyLogging
 
 package object core extends LazyLogging {
 
-	def parseConfig(path: String): Config = parseConfig(new File(path))
-	def parseConfig(path: File): Config =
-		ConfigFactory.parseFile(path, ConfigParseOptions.defaults().setAllowMissing(false))
+	def parseConfig(path: String): Config = parseConfig(Paths.get(path))
+	def parseConfig(path: Path): Config =
+		ConfigFactory.parseFile(path.toFile, ConfigParseOptions.defaults().setAllowMissing(false))
 
 	def configOptionString(key: String)(implicit config: Config): Option[String] = configOption(key, config.getString)
 	def configOptionInt(key: String)(implicit config: Config): Option[Int] = configOption(key, config.getInt)

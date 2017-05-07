@@ -3,9 +3,8 @@ package kokellab.utils.misc
 import java.io.{FileOutputStream, OutputStream, FileInputStream}
 import java.nio.file.Path
 import javax.imageio.ImageIO
-import java.nio.file.Paths
 
-import com.google.zxing.client.j2se.{MatrixToImageConfig, MatrixToImageWriter, BufferedImageLuminanceSource}
+import com.google.zxing.client.j2se.{MatrixToImageWriter, BufferedImageLuminanceSource}
 import com.google.zxing.common.HybridBinarizer
 import com.google.zxing.BinaryBitmap
 import com.google.zxing._

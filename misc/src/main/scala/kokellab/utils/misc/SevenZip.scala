@@ -17,8 +17,8 @@ object SevenZipCommandLine extends LazyLogging {
 		val code = (s"7z e $path -aos -o$writePath" #> os) !
 		val string = os.toString("UTF-8")
 		code match {
-			case 0 => Failure(throw new ServiceFailedException(s"Extracting archive $path to $writePath failed with exit code $code", serviceOutput = string))
-			case _ => Success(string)
+			case 0 => Success(string)
+			case i => Failure(throw new ServiceFailedException(s"Extracting archive $path to $writePath failed with exit code $code", serviceOutput = string))
 		}
 	}
 }
