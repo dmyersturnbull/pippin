@@ -3,7 +3,7 @@ package kokellab.utils.grammars
 import org.scalatest.{Matchers, PropSpec}
 import org.scalatest.prop.TableDrivenPropertyChecks
 
-class IfElseGrammarTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
+class IfElseRealNumberGrammarTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
 
 	property(s"If only") {
 		IfElseRealNumberGrammar.eval("if 50>5: 0") should equal (Some(0))
@@ -14,6 +14,18 @@ class IfElseGrammarTest extends PropSpec with TableDrivenPropertyChecks with Mat
 	property(s"If-else") {
 		IfElseRealNumberGrammar.eval("if 50>5: 0 else: 500") should equal (Some(0))
 		IfElseRealNumberGrammar.eval("if 50<5: 0 else: 500") should equal (Some(500))
+	}
+
+	property(s"Nested if-else") {
+		IfElseRealNumberGrammar.eval("if 2<1: 50 else: if 5<10: 100 else: 150") should equal (Some(100))
+		IfElseRealNumberGrammar.eval("if 2<1: 50 else: if 5>10: 100 else: 150") should equal (Some(150))
+		IfElseRealNumberGrammar.eval("if 2>1: if 1<2: 5 else: 500") should equal (Some(5))
+		IfElseRealNumberGrammar.eval("if 2>1: if 1>2: 5 else: 500") should equal (Some(500))
+		IfElseRealNumberGrammar.eval("if 2>1: if 1>2: 5 else: 999 else: 500") should equal (Some(999))
+		IfElseRealNumberGrammar.eval("if 1>2: if 1>2: 5 else: 999 else: 500") should equal (Some(500))
+		IfElseRealNumberGrammar.eval("if 2>1: if 1>2: 5 elif 2>1: 234 else: 999 else: 500") should equal (Some(234))
+		IfElseRealNumberGrammar.eval("if 2>1: if 1>2: 5 elif 1>2: 234 else: 999 else: 500") should equal (Some(999))
+		IfElseRealNumberGrammar.eval("if 1>2: if 1>2: 5 elif 1>2: 234 else: 999 elif 2>1: 777 else: 500") should equal (Some(777))
 	}
 
 	property(s"If-elif-else") {

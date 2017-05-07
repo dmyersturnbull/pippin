@@ -29,10 +29,16 @@ object IfElseIntegerGrammar {
 
 class IfElseIntegerGrammar(override val input: ParserInput, override val functions: Map[String, Seq[Int] => Int]) extends BooleanIntegerGrammar(input, functions) {
 
-	def ifElseLine: Rule1[Option[Int]] = rule { (someExpression | ifElifElse) ~ EOI }
+	def ifElseLine: Rule1[Option[Int]] = rule { ifElse ~ EOI }
+
+	def ifElse: Rule1[Option[Int]] = rule { someExpression | ifElifElse }
 
 	def ifElifElse: Rule1[Option[Int]] = rule {
-		ifElif ~ optional("else:" ~ expression) ~> ((a: Option[Int], b: Option[Int]) => if (a.isDefined) a else if (b.isDefined) b else None)
+		ifElif ~ elseExpr ~> ((a: Option[Int], b: Option[Int]) => if (a.isDefined) a else if (b.isDefined) b else None)
+	}
+
+	def elseExpr: Rule1[Option[Int]] = rule {
+		optional("else:" ~ ifElse) ~> ((value: Option[Option[Int]]) => if (value.isDefined) value.get else None)
 	}
 
 	def ifElif: Rule1[Option[Int]] = rule {
@@ -52,7 +58,7 @@ class IfElseIntegerGrammar(override val input: ParserInput, override val functio
 	def someExpression: Rule1[Option[Int]] = rule { expression ~> ((d: Int) => Some(d)) }
 
 	def conditionRule: Rule1[Option[Int]] = rule {
-		booleanExpression ~ ":" ~ expression ~> ((boolean: Boolean, value: Int) => if (boolean) Some(value) else None)
+		booleanExpression ~ ":" ~ ifElse ~> ((boolean: Boolean, value: Option[Int]) => if (boolean) value else None)
 	}
 
 }

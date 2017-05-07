@@ -29,11 +29,19 @@ object IfElseStringGrammar {
 
 class IfElseStringGrammar(override val input: ParserInput, override val functions: Map[String, Seq[Int] => Int]) extends BooleanIntegerGrammar(input, functions) {
 
-	def ifElseLine: Rule1[Option[String]] = rule { (ifElifElse | someValue) ~ EOI }
+	def ifElseLine: Rule1[Option[String]] = rule { ifElse ~ EOI }
+
+	def ifElse: Rule1[Option[String]] = rule { someValue | ifElifElse }
 
 	def ifElifElse: Rule1[Option[String]] = rule {
-		ifElif ~ optional("else:" ~ value) ~> ((a: Option[String], b: Option[String]) => if (a.isDefined) a else if (b.isDefined) b else None)
+		ifElif ~ elseExpr ~> ((a: Option[String], b: Option[String]) => if (a.isDefined) a else if (b.isDefined) b else None)
 	}
+
+	def elseExpr: Rule1[Option[String]] = rule {
+		optional("else:" ~ ifElse) ~> ((value: Option[Option[String]]) => if (value.isDefined) value.get else None)
+	}
+
+
 
 	def ifElif: Rule1[Option[String]] = rule {
 		"if" ~ conditionRule ~ elifs ~> ((a: Option[String], b: Option[String]) => if (a.isDefined) a else if (b.isDefined) b else None)
@@ -54,7 +62,7 @@ class IfElseStringGrammar(override val input: ParserInput, override val function
 	def value: Rule1[String] = rule { '"' ~ capture(zeroOrMore(noneOf("\""))) ~ '"'}
 
 	def conditionRule: Rule1[Option[String]] = rule {
-		booleanExpression ~ ":" ~ value ~> ((boolean: Boolean, value: String) => if (boolean) Some(value) else None)
+		booleanExpression ~ ":" ~ ifElse ~> ((boolean: Boolean, value: Option[String]) => if (boolean) value else None)
 	}
 
 }

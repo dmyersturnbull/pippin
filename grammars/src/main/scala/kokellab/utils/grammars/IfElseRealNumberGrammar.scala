@@ -18,10 +18,16 @@ class IfElseRealNumberGrammar(override val input: ParserInput,
 					functions: Map[String, Seq[Double] => Double] = RealNumberGrammar.defaultFunctionMap
 				   ) extends BooleanRealNumberGrammar(input, tolerance, randBasis, functions) {
 
-	def ifElseLine: Rule1[Option[Double]] = rule { (someExpression | ifElifElse) ~ EOI }
+	def ifElseLine: Rule1[Option[Double]] = rule { ifElse ~ EOI }
+
+	def ifElse: Rule1[Option[Double]] = rule { someExpression | ifElifElse }
 
 	def ifElifElse: Rule1[Option[Double]] = rule {
-		ifElif ~ optional("else:" ~ expression) ~> ((a: Option[Double], b: Option[Double]) => if (a.isDefined) a else if (b.isDefined) b else None)
+		ifElif ~ elseExpr ~> ((a: Option[Double], b: Option[Double]) => if (a.isDefined) a else if (b.isDefined) b else None)
+	}
+
+	def elseExpr: Rule1[Option[Double]] = rule {
+		optional("else:" ~ ifElse) ~> ((value: Option[Option[Double]]) => if (value.isDefined) value.get else None)
 	}
 
 	def ifElif: Rule1[Option[Double]] = rule {
@@ -41,7 +47,7 @@ class IfElseRealNumberGrammar(override val input: ParserInput,
 	def someExpression: Rule1[Option[Double]] = rule { expression ~> ((d: Double) => Some(d)) }
 
 	def conditionRule: Rule1[Option[Double]] = rule {
-		booleanExpression ~ ":" ~ expression ~> ((boolean: Boolean, value: Double) => if (boolean) Some(value) else None)
+		booleanExpression ~ ":" ~ ifElse ~> ((boolean: Boolean, value: Option[Double]) => if (boolean && value.isDefined) Some(value.get) else None)
 	}
 
 }
