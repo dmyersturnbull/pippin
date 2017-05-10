@@ -42,7 +42,7 @@ object TextUtils {
 	def openCsvReader(path: String, encoding: String): CSVReader = openCsvReader(Paths.get(path))
 	def openCsvReader(path: Path): CSVReader = openCsvReader(path, "UTF8")
 	def openCsvReader(path: Path, encoding: String): CSVReader = {
-		val is = if (path endsWith ".gz") new GZIPInputStream(Files.newInputStream(path)) else Files.newInputStream(path)
+		val is = if (path.toString endsWith ".gz") new GZIPInputStream(Files.newInputStream(path)) else Files.newInputStream(path)
 		CSVReader.open(new InputStreamReader(is, encoding))
 	}
 

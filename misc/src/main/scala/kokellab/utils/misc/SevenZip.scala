@@ -12,9 +12,9 @@ import scala.util.{Failure, Success, Try}
 
 
 object SevenZipCommandLine extends LazyLogging {
-	def un7zip(path: Path, writePath: Path): Try[String] = {
+	def un7zip(path: Path, writePath: Path, command: String = "7za"): Try[String] = {
 		val os  = new java.io.ByteArrayOutputStream
-		val code = (s"7z e $path -aos -o$writePath" #> os) !
+		val code = (s"$command e $path -o$writePath" #> os) !
 		val string = os.toString("UTF-8")
 		code match {
 			case 0 => Success(string)
