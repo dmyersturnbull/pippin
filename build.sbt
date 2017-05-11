@@ -6,6 +6,7 @@ lazy val commonSettings = Seq(
 	organization := "com.github.kokellab",
 	organizationHomepage := Some(url("https://github.com/kokellab")),
 	version := "0.2.0-SNAPSHOT",
+	crossScalaVersions := Seq(scalaVersion.value, "2.11.8"),
 	isSnapshot := true,
 	scalaVersion := "2.12.2",
 	publishMavenStyle := true,
