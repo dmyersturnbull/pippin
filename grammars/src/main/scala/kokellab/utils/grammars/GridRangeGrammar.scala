@@ -9,6 +9,8 @@ object GridRangeGrammar {
 		try {
 			parser.run().get
 		} catch {
+			case e: IllegalArgumentException =>
+				throw new GrammarException(s"The expression $input could not be parsed. Make sure to use the correct syntax (– vs. * vs. ...)")
 			case e: ParseError =>
 				throw new GrammarException(s"The expression $input could not be parsed",
 					Some(parser.formatError(e, new ErrorFormatter(showExpected = true, showFrameStartOffset = true, showLine = true, showPosition = true, showTraces = true))), Some(e))
