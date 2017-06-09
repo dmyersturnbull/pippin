@@ -32,6 +32,7 @@ object RealNumberGrammar {
 		"floor" -> (a => math.floor(a(0))),
 		"min" -> (a => a.min),
 		"max" -> (a => a.max),
+		"constrain" -> (a => math.max(0, math.min(255, a(0)))),
 		"mean" -> mean,
 		"stddev" -> stddev,
 		"skewness" -> skewness,
