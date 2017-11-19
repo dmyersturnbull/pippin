@@ -2,52 +2,36 @@ package kokellab.utils.grammars.params
 
 import kokellab.utils.grammars.{GrammarException, GridRangeGrammar, PointLike}
 
+trait Parameterizer
 
-class GridParameterizer[A](
-		val grammarFn: String => Option[A],
-		val quote: Boolean = false
-) {
+class GridParameterizer() extends Parameterizer {
 
-	val rangeParameterizer = new RangeParameterizer(quote = quote)
+	private val rangeParameterizer = new RangeParameterizer()
 
-	def mapValuesOntoGrid(
-							 range: String,
-							 valueExpression: String,
-							 substitutions: Map[DollarSignParam, DollarSignSub],
-							 nRows: Int, nColumns: Int
-						 ): Map[PointLike, A] = {
-		val cells: Seq[PointLike] = GridRangeGrammar.eval(range, nRows, nColumns)
-		val tuple = rangeParameterizer.mapIndexToValue(cells map (_.index), valueExpression, substitutions) match {
-			case Left(singleExpression) =>
-				cells flatMap { cell => {
-					val replaced = DollarSignParams.substitute(singleExpression, Map("$r" -> cell.row.toString, "$c" -> cell.column.toString, "$i" -> cell.index.toString))
-					grammarFn(replaced) map { ans => cell -> ans }
-				}
-				}
-			case Right(manyValues) =>
-				cells zip (manyValues map (v => grammarFn(v).get))
+	def mapToValue(
+			cells: Seq[PointLike],
+			valueExpression: String,
+			substitutions: Map[DollarSignParam, DollarSignSub]
+	): Map[PointLike, String] = {
+		val valuesAndPoints: Seq[(PointLike, String)] = cells zip rangeParameterizer.mapToValue(cells map (_.index), valueExpression, substitutions)
+		valuesAndPoints map { case (cell, value) =>
+			cell -> fill(cell, value)
 		}
-		tuple.toMap
-	}
+	}.toMap
+
+	private def fill(cell: PointLike, value: String): String =
+		DollarSignParams.substitute(value, Map("$r" -> cell.row.toString, "$c" -> cell.column.toString, "$i" -> cell.index.toString))
 
 }
 
 
-class RangeParameterizer(
-	val quote: Boolean = false
-) {
+class RangeParameterizer() extends Parameterizer {
 
-	/**
-	  *
-	  * @param range
-	  * @param valueExpression
-	  * @return just a String if the value applies to everything in the range; a list otherwise
-	  */
-	def mapIndexToValue(
+	def mapToValue(
 		range: Seq[Int],
 		valueExpression: String,
 		substitutions: Map[DollarSignParam, DollarSignSub]
-	): Either[String, Seq[String]] = {
+	): Seq[String] = {
 
 		val valueParams = DollarSignParams.find(valueExpression, Set.empty)
 		val lengths = (valueParams map {p =>
@@ -63,10 +47,10 @@ class RangeParameterizer(
 
 		if (valueParams forall (p => !p.isList)) {  // case A
 			val replaced = substitutions map (k => (k._1.name, k._2.values.head))
-			Left(DollarSignParams.substitute(valueExpression, replaced))
+			range map (x => DollarSignParams.substitute(valueExpression, replaced))
 
 		} else if (valueParams.size == 1 && valueParams.head.isList) {  // case B
-			Right(substitutions.head._2.values)
+			substitutions.head._2.values
 
 		} else {
 			val sub = "\n[" + (substitutions map {case (key, value) => s"$key = $value"} mkString "\n") + "\n]"

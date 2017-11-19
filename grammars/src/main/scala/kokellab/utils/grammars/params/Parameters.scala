@@ -1,6 +1,6 @@
 package kokellab.utils.grammars.params
 
-case class DollarSignSub(key: Param, values: List[String], isList: Boolean)
+case class DollarSignSub(key: DollarSignParam, values: List[String], isList: Boolean)
 
 
 object DollarSignParams {
@@ -19,11 +19,7 @@ object DollarSignParams {
 
 }
 
-trait Param {
-	def name: String
-}
-
-case class DollarSignParam(override val name: String, isPredefined: Boolean) extends Param {
+case class DollarSignParam(name: String, isPredefined: Boolean) {
 	assert(name.startsWith("$"), "Parameters must start with a $")
 	val isList: Boolean = name contains "..."
 	val isArrayAccess: Boolean = name contains "["

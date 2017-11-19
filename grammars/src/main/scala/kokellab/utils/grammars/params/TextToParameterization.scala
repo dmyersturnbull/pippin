@@ -27,7 +27,7 @@ class TextToParameterization(
 			originalText: String,
 			params: Set[DollarSignParam],
 			lengths: Map[String, Int]
-	): Map[Param, DollarSignSub] = {
+	): Map[DollarSignParam, DollarSignSub] = {
 
 		def quoteIfNeeded(s: String): String = if (quote && !s.startsWith("\"") && !s.endsWith("\"")) "\"" + s + "\"" else s
 
