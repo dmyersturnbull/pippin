@@ -100,7 +100,8 @@ The result is 50 for the first 10s, 100 for the next 10s, and follows Brownian m
 <col>   ::= <digit>{<digit>}
 <point> ::= <row><col>
 <op>    ::= '-'|'*'|'...'
-<range> ::= <point> <op> <point>
+<range> ::= <point> [<op> <point>]
+<multi> ::= <range> {',' <range>}
 ```
 
 The operators `-`, `*`, and `...` have distinct meanings for a grid of dimensions `(n, m)`.

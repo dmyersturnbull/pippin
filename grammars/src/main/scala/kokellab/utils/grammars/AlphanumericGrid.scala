@@ -7,6 +7,14 @@ trait GridLike {
 	def nRows: Int
 	def nColumns: Int
 
+	def at[P <: PointLike](row: Int, column: Int)(implicit gen: (Int, Int) => P): P = gen(row, column)
+	def at[P <: PointLike](i: Int)(implicit gen: (Int, Int) => P): P = gen((i-1) / nColumns + 1, (i-1) % nColumns + 1)
+
+	def cells[P <: PointLike]()(implicit gen: (Int, Int) => P): Seq[PointLike] = {
+		for (i <- 0 to nRows * nColumns) yield {
+			gen((i-1) / nColumns + 1, (i-1) % nColumns + 1)
+		}}
+
 	def simpleRange[P <: PointLike](a: P, b: P)(implicit gen: (Int, Int) => P) = {
 		if (a.row == b.row) {
 			require(a.column <= b.column, "Column for $a > column for $b")
@@ -27,8 +35,7 @@ trait GridLike {
 	def traversalRange[P <: PointLike](a: P, b: P)(implicit gen: (Int, Int) => P) = {
 		require(a.index <= b.index, "Point $a > $b in traversal range")
 		for (i <- a.index to b.index) yield {
-			val z = i - 1
-			gen(z / nColumns + 1, z % nColumns + 1)
+			gen((i-1) / nColumns + 1, (i-1) % nColumns + 1)
 		}
 	}.toList
 }
