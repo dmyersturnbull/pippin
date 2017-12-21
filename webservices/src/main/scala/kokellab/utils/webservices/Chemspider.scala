@@ -16,9 +16,9 @@ import kokellab.utils.core.parseConfig
   */
 class Chemspider(token: String =
 				 if (sys.env contains "CHEMSPIDER_TOKEN") sys.env("CHEMSPIDER_TOKEN")
-				 else Try(parseConfig("conf/app.properties").getString("chemspiderToken")) match {
+				 else Try(parseConfig("conf/application.conf").getString("chemspiderToken")) match {
 					 case Success(v) => v
-					 case Failure(_) => throw new IllegalStateException("No chemspider token was passed, did not find an environment variable CHEMSPIDER_TOKEN, and did not find chemspiderToken in config/app.properties")
+					 case Failure(_) => throw new IllegalStateException("No chemspider token was passed, did not find an environment variable CHEMSPIDER_TOKEN, and did not find chemspiderToken in conf/application.conf")
 				 }
 				) extends LazyLogging {
 

@@ -1,4 +1,4 @@
-name := "kl-common-scala-chem"
+name := "skale-chem"
 // depressingly, CDK uses log4j directly; also, I don't know which of these I need
 libraryDependencies ++= Seq(
 	"org.openscience.cdk" % "cdk-standard" % "1.5.15",

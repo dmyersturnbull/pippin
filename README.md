@@ -1,7 +1,7 @@
-# kl-common-scala
+# skale
 Public Scala utilities to be shared across projects in the [Kokel Lab](https://kokellab.com).
 
-[![CircleCI](https://circleci.com/gh/kokellab/kl-common-scala.svg?style=shield)](https://circleci.com/gh/kokellab/kl-common-scala)
+[![CircleCI](https://circleci.com/gh/kokellab/skale.svg?style=shield)](https://circleci.com/gh/kokellab/skale)
 
 ## organization
 
@@ -25,7 +25,7 @@ This will publish all of these subprojects to your local [Ivy](https://ant.apach
 To import the published _core_ artifact, add this to your SBT dependencies:
 
 ```
-com.github.kokellab" %% "kl-common-scala" % "0.1.1-SNAPSHOT"
+com.github.kokellab" %% "skale" % "0.4.0-SNAPSHOT"
 ```
 
 ## license

@@ -1,4 +1,4 @@
-name := "kl-common-scala-misc"
+name := "skale-misc"
 libraryDependencies ++= Seq(
 	"org.apache.commons" % "commons-compress" % "1.13",
 	"org.tukaani" % "xz" % "1.6",
