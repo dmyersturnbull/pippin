@@ -6,9 +6,12 @@ import org.parboiled2.{ErrorFormatter, ParseError, Parser}
 
 object GrammarUtils {
 
+	private val trans = Transliterations.dashes ++ Transliterations.math
+
 	def randBasis(seed: Int): RandBasis = new RandBasis(new ThreadLocalRandomGenerator(new MersenneTwister(seed)))
 
-	def replaceCommon(expression: String): String = commonReplacements.foldLeft(expression) ((e, s) => e.replaceAllLiterally(s._1, s._2))
+	def replaceCommon(expression: String): String =
+		trans(expression).replace("∞", "Infinity")
 
 	def wrapGrammarException[A](expression: String, parser: Parser, parse: () => A): A = try {
 			parse()
