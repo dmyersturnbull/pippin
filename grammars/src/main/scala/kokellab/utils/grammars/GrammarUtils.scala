@@ -8,7 +8,16 @@ object GrammarUtils {
 
 	def randBasis(seed: Int): RandBasis = new RandBasis(new ThreadLocalRandomGenerator(new MersenneTwister(seed)))
 
-	def replaceCommon(expression: String): String = commonReplacements.foldLeft(expression) ((e, s) => e.replaceAllLiterally(s._1, s._2))
+	def replaceCommon(expression: String): String = {
+		val string = commonReplacements.foldLeft(expression) ((e, s) => e.replaceAllLiterally(s._1, s._2))
+		// TODO This is terrible
+		var inQuote: Boolean = false
+		val flat = string flatMap {c =>
+			if (c == '"') { inQuote = !inQuote }
+			if (!c.isWhitespace || !inQuote) Seq(c) else Seq.empty[Char]
+		}
+		flat.mkString("")
+	}
 
 	def wrapGrammarException[A](expression: String, parser: Parser, parse: () => A): A = try {
 			parse()
@@ -21,5 +30,5 @@ object GrammarUtils {
 				throw new GrammarException(s"Error parsing expression $expression by ${parser.getClass.getSimpleName}: ${e.getMessage}", None, Some(e))
 		}
 
-	private val commonReplacements = Map(" " -> "", "−" -> "-", "!=" -> "≠", "<=" -> "≤", ">=" -> "≥", "==" -> "=", "~=" -> "≈", "!~=" -> "≉", "∞" -> "Infinity", "infinity" -> "Infinity", "inf" -> "Infinity", "Inf" -> "Infinity")
+	private val commonReplacements = Map("−" -> "-", "!=" -> "≠", "<=" -> "≤", ">=" -> "≥", "==" -> "=", "~=" -> "≈", "!~=" -> "≉", "∞" -> "Infinity", "infinity" -> "Infinity", "inf" -> "Infinity", "Inf" -> "Infinity")
 }
