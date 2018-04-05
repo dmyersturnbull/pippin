@@ -14,7 +14,7 @@ object GrammarUtils {
 		var inQuote: Boolean = false
 		val flat = string flatMap {c =>
 			if (c == '"') { inQuote = !inQuote }
-			if (!c.isWhitespace || !inQuote) Seq(c) else Seq.empty[Char]
+			if (!c.isWhitespace || inQuote) Seq(c) else Seq.empty[Char]
 		}
 		flat.mkString("")
 	}
