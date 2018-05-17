@@ -1,4 +1,4 @@
-name := "kl-common-scala-webservices"
+name := "skale-webservices"
 libraryDependencies ++= Seq(
 	"org.apache.axis2" % "axis2" % "1.7.3" pomOnly(), // apparently needed for ChemSpider API
 	"org.apache.axis2" % "axis2-kernel" % "1.7.3", // apparently needed for ChemSpider API

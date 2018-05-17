@@ -1,4 +1,4 @@
-name := "scale"
+name := "skale"
 
 description := "Common Scala utilities for the Kokel Lab"
 
@@ -13,18 +13,18 @@ lazy val commonSettings = Seq(
 	publishTo :=
 		Some(if (isSnapshot.value)
 			"Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-			else "Sonatype Releases"  at "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+			else "Sonatype Releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2"
 		),
 	publishArtifact in Test := false,
 	pomIncludeRepository := { _ => false },
 	javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:all"),
 	scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-language:postfixOps"),
 	testOptions in Test += Tests.Argument("-oF"),
-	homepage := Some(url("https://github.com/kokellab/scale")),
+	homepage := Some(url("https://github.com/kokellab/skale")),
 	licenses := Seq("Apache Software License, Version 2.0"  -> url("https://www.apache.org/licenses/LICENSE-2.0")),
 	developers := List(Developer("dmyersturnbull", "Douglas Myers-Turnbull", "dmyersturnbull@kokellab.com", url("https://github.com/dmyersturnbull"))),
 	startYear := Some(2016),
-	scmInfo := Some(ScmInfo(url("https://github.com/kokellab/scale"), "https://github.com/kokellab/scale.git")),
+	scmInfo := Some(ScmInfo(url("https://github.com/kokellab/skale"), "https://github.com/kokellab/skale.git")),
 	libraryDependencies ++= Seq(
 		"com.typesafe" % "config" % "1.3.0",
 		"com.jsuereth" %% "scala-arm" % "2.0",
@@ -41,7 +41,7 @@ lazy val commonSettings = Seq(
 	pomExtra :=
 		<issueManagement>
 			<system>Github</system>
-			<url>https://github.com/kokellab/scale/issues</url>
+			<url>https://github.com/kokellab/skale/issues</url>
 		</issueManagement>
 )
 
