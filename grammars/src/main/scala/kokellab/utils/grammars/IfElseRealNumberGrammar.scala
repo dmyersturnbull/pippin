@@ -14,9 +14,9 @@ object IfElseRealNumberGrammar {
 }
 
 class IfElseRealNumberGrammar(override val input: ParserInput,
-					tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE, randBasis: Option[RandBasis] = None,
-					functions: Map[String, Seq[Double] => Double] = RealNumberGrammar.defaultFunctionMap
-				   ) extends BooleanRealNumberGrammar(input, tolerance, randBasis, functions) {
+		tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE, randBasis: Option[RandBasis] = None,
+		functions: Map[String, Seq[Double] => Double] = RealNumberGrammar.defaultFunctionMap
+) extends BooleanRealNumberGrammar(input, tolerance, randBasis, functions) {
 
 	def ifElseLine: Rule1[Option[Double]] = rule { ifElse ~ EOI }
 

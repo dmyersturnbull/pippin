@@ -13,7 +13,9 @@ object GrammarUtils {
 	def replaceCommon(expression: String): String =
 		trans(expression).replace("∞", "Infinity")
 
-	def wrapGrammarException[A](expression: String, parser: Parser, parse: () => A): A = try {
+	def wrapGrammarException[A](expression: String, parser: Parser, parse: () => A): A = {
+		if (expression.isEmpty) throw new GrammarException(s"${parser.getClass.getSimpleName} could not parse: The expression is empty!")
+		try {
 			parse()
 		} catch {
 			case e: ParseError =>
@@ -23,6 +25,7 @@ object GrammarUtils {
 			case e: IllegalArgumentException =>
 				throw new GrammarException(s"Error parsing expression $expression by ${parser.getClass.getSimpleName}: ${e.getMessage}", None, Some(e))
 		}
+	}
 
 	private val commonReplacements = Map(" " -> "", "−" -> "-", "!=" -> "≠", "<=" -> "≤", ">=" -> "≥", "==" -> "=", "~=" -> "≈", "!~=" -> "≉", "∞" -> "Infinity", "infinity" -> "Infinity", "inf" -> "Infinity", "Inf" -> "Infinity")
 }

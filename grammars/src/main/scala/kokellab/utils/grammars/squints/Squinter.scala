@@ -2,12 +2,16 @@ package kokellab.utils.grammars.squints
 
 import java.util.regex.Pattern
 
+import kokellab.utils.grammars.GrammarException
 import squants.mass.SubstanceConcentration
 import squants.time.Time
 import squants.{Dimension, Quantity}
 
 import scala.util.{Failure, Success, Try}
 import scala.util.Try
+
+
+class SiPrefixException(message: String, verboseMessage: Option[String] = None, underlying: Option[Exception] = None) extends GrammarException(message, verboseMessage, underlying)
 
 /**
   * Utility to modify amounts with SI prefixes. Ex:
@@ -19,13 +23,13 @@ import scala.util.Try
   * @tparam A The resulting type, probably a squants type
   */
 class Squinter[A <: Quantity[A]](
-									parser: String => Try[A],
-									allowedUnits: Set[String],
-									numberParser: String => Double = _.toDouble,
-									defaultUnit: String = "",
-									numberPattern: String = Squinter.doublePattern,
-									siPrefixes: List[SiPrefix] = SiPrefix.prefixes
-								) extends (String => A) {
+		parser: String => Try[A],
+		allowedUnits: Set[String],
+		numberParser: String => Double = _.toDouble,
+		defaultUnit: String = "",
+		numberPattern: String = Squinter.doublePattern,
+		siPrefixes: List[SiPrefix] = SiPrefix.prefixes
+) extends (String => A) {
 
 	private val prefixMap = (siPrefixes map (p => p.symbol -> p)).toMap
 
@@ -41,7 +45,8 @@ class Squinter[A <: Quantity[A]](
 					case Failure(e) =>
 						parser(s) match {
 							case Success(v2) => v2
-							case Failure(e2) => throw new IllegalArgumentException(s"Could not parse expression $s", e)
+							case Failure(e2: Exception) => throw new SiPrefixException(s"Could not parse expression $s", underlying = Some(e2))
+							case Failure(e2) => throw e2
 						}
 				}
 		}

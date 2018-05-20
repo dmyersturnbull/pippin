@@ -4,6 +4,8 @@ import java.util.regex.Pattern
 
 import kokellab.utils.grammars.GrammarException
 
+class TextToParameterizationExpression(message: String, verboseMessage: Option[String] = None, underlying: Option[Exception] = None) extends GrammarException(message, verboseMessage, underlying)
+
 /**
   * This weird code parses a block of text into a map of substitutions. The format (ignoring whitespace) is:
   * <code>
@@ -15,7 +17,6 @@ import kokellab.utils.grammars.GrammarException
   *     "z"
   *     ]
   * </code>
-  *
   */
 class TextToParameterization(
 		val failOnUnexpected: Boolean = false,
@@ -43,23 +44,23 @@ class TextToParameterization(
 
 		text.split("\n") flatMap { s =>
 			if (s.trim.isEmpty) None else {
-				if (!(s contains '=')) throw new GrammarException(s"Non-empty line $s does not contain an equals sign")
+				if (!(s contains '=')) throw new TextToParameterizationExpression(s"Non-empty line $s does not contain an equals sign")
 				val key = s.substring(0, s.indexOf('=')).trim
 				val value = s.substring(s.indexOf('=') + 1).trim
 				if (!(params exists (p => p.name == key))) {
-					if (failOnUnexpected) throw new GrammarException(s"A parameter in: \n[\n$text\n]\n ... is not defined")
+					if (failOnUnexpected) throw new TextToParameterizationExpression(s"A parameter in: \n[\n$text\n]\n ... is not defined")
 					else None
 				} else Some{
 					val param = params.find(p => p.name == key).get
 					if (param.isList) {
-						if (!(value startsWith "[") || !(value endsWith "]")) throw new GrammarException(s"The parameter ${param.name} is a list type, but '$value' is not enclosed in []")
+						if (!(value startsWith "[") || !(value endsWith "]")) throw new TextToParameterizationExpression(s"The parameter ${param.name} is a list type, but '$value' is not enclosed in []")
 						val zs = value.substring(1, value.length - 1) split "," map (_.trim) map quoteIfNeeded
 						assert(lengths contains param.name, s"Length is missing for parameter $param")
-						if (lengths(param.name) != zs.length) throw new GrammarException(s"The parameter ${param.name} has length ${lengths(param.name)}, but the value '$value' has length ${zs.length}")
-						if (!(zs forall (z => pattern.matcher(z).matches))) throw new GrammarException(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
+						if (lengths(param.name) != zs.length) throw new TextToParameterizationExpression(s"The parameter ${param.name} has length ${lengths(param.name)}, but the value '$value' has length ${zs.length}")
+						if (!(zs forall (z => pattern.matcher(z).matches))) throw new TextToParameterizationExpression(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
 						DollarSignSub(param, zs.toList, true)
 					} else {
-						if (!pattern.matcher(value).matches()) throw new GrammarException(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
+						if (!pattern.matcher(value).matches()) throw new TextToParameterizationExpression(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
 						DollarSignSub(param, List(quoteIfNeeded(value)), false)
 					}
 				}

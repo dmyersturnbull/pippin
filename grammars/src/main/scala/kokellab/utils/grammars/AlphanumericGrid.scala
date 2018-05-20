@@ -2,6 +2,14 @@ package kokellab.utils.grammars
 
 import java.util.regex.Pattern
 
+
+class GridException(message: String) extends GrammarException(message)
+
+class RangeIsNotSimpleException(message: String) extends GridException(message)
+
+class FlippedCoordinatesException(message: String) extends GridException(message)
+
+
 trait GridLike {
 
 	def nRows: Int
@@ -17,27 +25,34 @@ trait GridLike {
 
 	def simpleRange[P <: PointLike](a: P, b: P)(implicit gen: (Int, Int) => P) = {
 		if (a.row == b.row) {
-			require(a.column <= b.column, "Column for $a > column for $b")
+			indCheck(a.column <= b.column, s"Column for $a > column for $b")
 			for (c <- a.column to b.column) yield gen(a.row, c)
 		} else if (a.column == b.column) {
-			require(a.row <= b.row, "Row for $a > column for $b")
+			indCheck(a.row <= b.row, s"Row for $a > column for $b")
 			for (r <- a.row to b.row) yield gen(r, a.column)
 		} else {
-			throw new IllegalArgumentException(s"$a and $b do not form a simple range")
+			throw new RangeIsNotSimpleException(s"$a and $b do not form a simple range. When specifying more than a single row or single column, use * to denote a block and ... to denote a traversal.")
 		}
 	}.toList
 
 	def blockRange[P <: PointLike](a: P, b: P)(implicit gen: (Int, Int) => P) = {
-		require(a.row <= b.row && a.column <= b.column, "Row or column for $a comes after row or column for $b in block range")
+		indCheck(a.row <= b.row && a.column <= b.column, s"Row or column for $a comes after row or column for $b in block range")
 		for (r <- a.row to b.row; c <- a.column to b.column) yield gen(r, c)
 	}.toList
 
 	def traversalRange[P <: PointLike](a: P, b: P)(implicit gen: (Int, Int) => P) = {
-		require(a.index <= b.index, "Point $a > $b in traversal range")
+		indCheck(a.index <= b.index, s"Point $a > $b in traversal range")
 		for (i <- a.index to b.index) yield {
 			gen((i-1) / nColumns + 1, (i-1) % nColumns + 1)
 		}
 	}.toList
+
+	protected def indCheck(check: Boolean, message: String): Unit = {
+		if (!check) throw new FlippedCoordinatesException(message)
+	}
+	protected def grammarCheck(check: Boolean, message: String): Unit = {
+		if (!check) throw new GridException(message)
+	}
 }
 
 /**
@@ -45,11 +60,11 @@ trait GridLike {
   */
 case class AlphanumericGrid(nRows: Int, nColumns: Int) extends GridLike {
 
-	require(nRows > 0)
-	require(nColumns > 0)
+	grammarCheck(nRows > 0, s"There are 0 rows in ($nRows, $nColumns)")
+	grammarCheck(nColumns > 0, s"There are 0 columns in ($nRows, $nColumns)")
 
 	case class Point(row: Int, column: Int) extends PointLike {
-		require(row > 0 && row <= nRows && column > 0 && column <= nColumns, s"($row, $column) is out of bounds of ($nRows, $nColumns) grid")
+		indCheck(row > 0 && row <= nRows && column > 0 && column <= nColumns, s"($row, $column) is out of bounds of ($nRows, $nColumns) grid")
 		def this(s: String) = this(stringToRow(s), stringToColumn(s))
 		def this(i: Int) = this((i-1) / nColumns + 1, (i-1) % nColumns + 1)
 		val index = nColumns*(row-1) + column
@@ -59,14 +74,14 @@ case class AlphanumericGrid(nRows: Int, nColumns: Int) extends GridLike {
 	private val pattern = Pattern.compile("([A-Z]+)([0-9]+)")
 	private def stringToRow(s: String): Int = {
 		val m = pattern.matcher(s)
-		require(m.matches())
+		grammarCheck(m.matches(), s"String $s does not define a row")
 		(m.group(1).zipWithIndex map { case (c: Char, i: Int) =>
 			26*i + (c - 'A' + 1)
 		}).sum
 	}
 	private def stringToColumn(s: String): Int = {
 		val m = pattern.matcher(s)
-		require(m.matches())
+		grammarCheck(m.matches(), s"String $s does not define a column")
 		m.group(2).toInt
 	}
 

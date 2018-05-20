@@ -7,30 +7,62 @@ import scala.reflect.ClassTag
 import scala.util.{Failure, Success, Try}
 import scala.util.matching.Regex.Match
 
+class EvaluationIntervalException(message: String, verboseMessage: Option[String] = None, underlying: Option[Exception] = None)
+	extends GrammarException(message, verboseMessage, underlying)
+
 object TimeSeriesGrammar {
 
-	def build[A : ClassTag](expression: String, start: Int, stop: Int, converter: Double => A,
-			  randBasis: Option[RandBasis] = None, defaultValue: Byte = 0, outOfBoundsValue: Double = Double.NaN, tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE
-			 ): TraversableOnce[A] = {
+	def build[A : ClassTag](
+			expression: String, start: Int, stop: Int, converter: Double => A,
+			randBasis: Option[RandBasis] = None,
+			defaultValue: Double = 0, outOfBoundsValue: Double = Double.NaN,
+			tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE
+	): TraversableOnce[A] = {
 		val (value, interval) = extract(expression)
 		new TimeSeriesGrammar(value, start, stop, converter, randBasis, interval, defaultValue, outOfBoundsValue = outOfBoundsValue, tolerance = tolerance).build()
 	}
 
-	private val mainPattern = """ *(.*?) *(?: +(?:evaluate every)|@ +(\d+))?""".r
+	// we allow a negative and decimal points in the evaluation interval to catch those errors intelligently
+	private val mainPattern = """ *(.*?) *(?: +(?:evaluate every)|@ +(\-?\d+(?:\.\d+)?))?""".r
 
 	private def extract(expression: String): (String, Int) = expression match {
 		case mainPattern(value: String, interval) =>
 			val intervalInt = if (interval == null) 1
 			else Try(interval.toInt) match {
-				case Success(v) => if (v > 0) v else throw new GrammarException("Evaluation interval $interval (\"evaluate every\" or \"@\" must be a positive integer")
-				case Failure(_) => throw new GrammarException("Evaluation interval $interval (\"evaluate every\" or \"@\" must be a positive integer")
+				case Success(v) => if (v > 0) {
+					checkEvaluationIntervalDividesDivisor(expression)
+					v
+				} else throw new EvaluationIntervalException("Evaluation interval $interval (\"evaluate every\" or \"@\" must be a positive integer")
+				case Failure(_) => throw new EvaluationIntervalException("Evaluation interval $interval (\"evaluate every\" or \"@\" must be a positive integer")
 			}
 			(value, intervalInt)
 	}
+
+	private def checkEvaluationIntervalDividesDivisor(expression: String): Unit = expression match {
+		case divisorAndEvaluationPattern(modulus: String, interval: String) =>
+			if (modulus.toInt % interval.toInt != 0) {
+				throw new EvaluationIntervalException(
+					s"Evaluation interval $interval does not divide modulus $modulus",
+					Some("Evaluation interval $interval does not divide modulus $modulus used in modulo operation in expression '$expression'")
+				)
+			}
+		case _ => // no evaluation interval, so it's defined to be 1
+	}
+
+	private val divisorAndEvaluationPattern = """.*%(\d+).*@ *(\d+) *""".r
+
 }
 
-class TimeSeriesGrammar[@specialized(Float, Double, Byte, Short, Int) A : ClassTag](expression: String, start: Int, stop: Int, converter: Double => A,
-						randBasis: Option[RandBasis] = None, evaluationInterval: Int = 1, defaultValue: Double = 0, outOfBoundsValue: Double = Double.NaN, tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE) {
+class TimeSeriesGrammar[@specialized(Float, Double, Byte, Short, Int) A : ClassTag](
+			expression: String, start: Int, stop: Int, converter: Double => A,
+			randBasis: Option[RandBasis] = None, evaluationInterval: Int = 1,
+			defaultValue: Double = 0, outOfBoundsValue: Double = Double.NaN,
+			tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE
+) {
+
+	if (evaluationInterval > stop - start) {
+		throw new EvaluationIntervalException(s"Evaluation interval $evaluationInterval is longer than the block (start=$start, stop=$stop)")
+	}
 
 	private val tPattern = """\$t(?![\[A-Za-z0-9_])""".r
 	private val tArrayPattern = """\$t\[([^\]]+)\]""".r
