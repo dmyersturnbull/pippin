@@ -17,8 +17,7 @@ object IntegerGrammar {
 	)
 
 	def eval(expression: String) = {
-		val parser = new IntegerGrammar(GrammarUtils.replaceCommon(expression), defaultFunctionMap)
-		GrammarUtils.wrapGrammarException(expression, parser, () => parser.integerLine.run().get)
+		call[Int, IntegerGrammar](e => new IntegerGrammar(e, defaultFunctionMap), p => p.integerLine.run().get, expression)
 	}
 
 }

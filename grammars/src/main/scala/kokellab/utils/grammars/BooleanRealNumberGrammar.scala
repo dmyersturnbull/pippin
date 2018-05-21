@@ -8,10 +8,8 @@ object BooleanRealNumberGrammar {
 	val DEFAULT_TOLERANCE = 0.000001
 
 	def eval(expression: String, tolerance: Double = DEFAULT_TOLERANCE, randBasis: Option[RandBasis] = None) = {
-		val functions = if (randBasis.isDefined) RealNumberGrammar.defaultFunctionMap ++ RealNumberGrammar.stochasticFunctionMap(randBasis.get)
-		else RealNumberGrammar.defaultFunctionMap
-		val parser = new BooleanRealNumberGrammar(GrammarUtils.replaceCommon(expression), tolerance, randBasis, functions)
-		GrammarUtils.wrapGrammarException(expression, parser, () => parser.booleanLine.run().get)
+		val functions = randBasis map (rb => RealNumberGrammar.defaultFunctionMap ++ RealNumberGrammar.stochasticFunctionMap(rb)) getOrElse RealNumberGrammar.defaultFunctionMap
+		call[Boolean, BooleanRealNumberGrammar](e => new BooleanRealNumberGrammar(e, tolerance, randBasis, functions), p => p.booleanLine.run().get, expression)
 	}
 }
 

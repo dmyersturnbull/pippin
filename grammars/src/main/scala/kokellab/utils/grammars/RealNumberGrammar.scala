@@ -52,9 +52,8 @@ object RealNumberGrammar {
 	}
 
 	def eval(expression: String, randBasis: Option[RandBasis] = None) = {
-		val functions = if (randBasis.isDefined) defaultFunctionMap ++ stochasticFunctionMap(randBasis.get) else defaultFunctionMap
-		val parser = new RealNumberGrammar(GrammarUtils.replaceCommon(expression), functions)
-		GrammarUtils.wrapGrammarException(expression, parser, () => parser.realNumberLine.run().get)
+		val functions = randBasis map (rb => defaultFunctionMap ++ stochasticFunctionMap(rb)) getOrElse defaultFunctionMap
+		call[Double, RealNumberGrammar](e => new RealNumberGrammar(e, functions), p => p.realNumberLine.run().get, expression)
 	}
 
 	private def mean(a: Seq[Double]): Double = a.sum / a.size

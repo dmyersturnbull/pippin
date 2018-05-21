@@ -18,6 +18,9 @@ class TransliterationsTest extends PropSpec with GeneratorDrivenPropertyChecks w
 		test(Transliterations.math)
 		Transliterations.math.idempotent should equal (true)
 	}
+	property(s"infinity") {
+		Transliterations.math("inf") should equal ("∞")
+	}
 	property(s"Greek math") {
 		val gm = Transliterations.math ++ Transliterations.greek
 		(gm ## gm) should equal (true)

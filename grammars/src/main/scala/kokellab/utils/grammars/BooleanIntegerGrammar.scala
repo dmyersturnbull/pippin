@@ -4,9 +4,8 @@ import org.parboiled2._
 
 object BooleanIntegerGrammar {
 
-	def eval(expression: String) = {
-		val parser = new BooleanIntegerGrammar(GrammarUtils.replaceCommon(expression))
-		GrammarUtils.wrapGrammarException(expression, parser, () => parser.booleanLine.run().get)
+	def eval(expression: String): Boolean = {
+		call[Boolean, BooleanIntegerGrammar](e => new BooleanIntegerGrammar(e), p => p.booleanLine.run().get, expression)
 	}
 }
 

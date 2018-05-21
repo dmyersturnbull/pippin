@@ -6,10 +6,8 @@ import org.parboiled2._
 object IfElseRealNumberGrammar {
 
 	def eval(expression: String, tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE, randBasis: Option[RandBasis] = None): Option[Double] = {
-		val functions = if (randBasis.isDefined) RealNumberGrammar.defaultFunctionMap ++ RealNumberGrammar.stochasticFunctionMap(randBasis.get)
-		else RealNumberGrammar.defaultFunctionMap
-		val parser = new IfElseRealNumberGrammar(GrammarUtils.replaceCommon(expression), tolerance, randBasis, functions)
-		GrammarUtils.wrapGrammarException(expression, parser, () => parser.ifElseLine.run().get)
+		val functions = randBasis map (rb => RealNumberGrammar.defaultFunctionMap ++ RealNumberGrammar.stochasticFunctionMap(rb)) getOrElse RealNumberGrammar.defaultFunctionMap
+		call[Option[Double], IfElseRealNumberGrammar](e => new IfElseRealNumberGrammar(e, tolerance, randBasis, functions), p => p.ifElseLine.run().get, expression)
 	}
 }
 

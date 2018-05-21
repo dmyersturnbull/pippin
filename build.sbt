@@ -5,10 +5,10 @@ description := "Common Scala utilities for the Kokel Lab"
 lazy val commonSettings = Seq(
 	organization := "com.github.kokellab",
 	organizationHomepage := Some(url("https://github.com/kokellab")),
-	version := "0.4.0-SNAPSHOT",
+	version := "0.4.1-SNAPSHOT",
 	crossScalaVersions := Seq(scalaVersion.value, "2.11.8"),
 	isSnapshot := true,
-	scalaVersion := "2.12.4",
+	scalaVersion := "2.12.2",
 	publishMavenStyle := true,
 	publishTo :=
 		Some(if (isSnapshot.value)

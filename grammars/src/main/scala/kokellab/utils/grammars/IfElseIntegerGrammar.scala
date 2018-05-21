@@ -21,8 +21,7 @@ object IfElseIntegerGrammar {
 	)
 
 	def eval(expression: String): Option[Int] = {
-		val parser = new IfElseIntegerGrammar(GrammarUtils.replaceCommon(expression), defaultFunctionMap)
-		GrammarUtils.wrapGrammarException(expression, parser, () => parser.ifElseLine.run().get)
+		call[Option[Int], IfElseIntegerGrammar](e => new IfElseIntegerGrammar(e, defaultFunctionMap), p => p.ifElseLine.run().get, expression)
 	}
 
 }
