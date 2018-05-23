@@ -6,6 +6,10 @@ import org.parboiled2.{ErrorFormatter, ParseError, Parser}
 
 package object grammars {
 
+	class GrammarException(val message: String, val verboseMessage: Option[String] = None, val underlying: Option[Exception] = None) extends Exception(message, underlying.orNull) {
+
+	}
+
 	class Wrapper[A, P <: Parser](parserGen: String => P, parse: P => A) {
 		def apply(expression: String): A = {
 			val parser = parserGen(expression)

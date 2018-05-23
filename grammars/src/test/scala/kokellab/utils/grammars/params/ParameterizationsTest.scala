@@ -9,7 +9,7 @@ class ParameterizationsTest extends PropSpec with TableDrivenPropertyChecks with
 	property(s"Parameterize grid") {
 		val parameterizer = new GridParameterizer()
 		val param = DollarSignParam("$x", false)
-		val sub = DollarSignSub(param, List("7"), false)
+		val sub = DollarSignSub(param, List("7"))
 		val grid = AlphanumericGrid(8, 12)
 		val results: Map[PointLike, String] = parameterizer.mapToValue(
 			Seq(grid.Point(1,2), grid.Point(1,3), grid.Point(1,4)),
@@ -22,19 +22,19 @@ class ParameterizationsTest extends PropSpec with TableDrivenPropertyChecks with
 	property(s"Parameterize range") {
 		val parameterizer = new RangeParameterizer()
 		val param = DollarSignParam("$x", false)
-		val sub = DollarSignSub(param, List("7"), false)
+		val sub = DollarSignSub(param, List("7"))
 		val results: Seq[String] = parameterizer.mapToValue(Range(30, 35), "t=$t, x=$x", Map(param -> sub))
 		results.toList should equal (List("t=$t, x=7", "t=$t, x=7", "t=$t, x=7", "t=$t, x=7", "t=$t, x=7"))
 	}
 
 	val p1 = DollarSignParam("$abc", false)
-	val x1 = Map(p1 -> DollarSignSub(p1, List("50"), false))
+	val x1 = Map(p1 -> DollarSignSub(p1, List("50")))
 
 	val p2 = DollarSignParam("$...abc", false)
-	val x2 = Map(p2 -> DollarSignSub(p2, List(10, 11, 12, 13, 14, 15) map (_.toString), false))
+	val x2 = Map(p2 -> DollarSignSub(p2, List(10, 11, 12, 13, 14, 15) map (_.toString)))
 
 	val p3 = DollarSignParam("$abc", false)
-	val x3 = Map(p3 -> DollarSignSub(p1, List("10"), false))
+	val x3 = Map(p3 -> DollarSignSub(p1, List("10")))
 
 	property(s"mapIndexToValue") {
 		val parameterizer = new RangeParameterizer()

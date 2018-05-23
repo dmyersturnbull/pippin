@@ -7,12 +7,15 @@ import java.nio.file.{Files, Path, Paths}
 import java.security.MessageDigest
 import java.sql.Blob
 import java.util.concurrent.{ConcurrentMap, TimeUnit}
-import javax.sql.rowset.serial.SerialBlob
 
+import javax.sql.rowset.serial.SerialBlob
 import com.google.common.cache.CacheBuilder
 import com.google.common.io.{BaseEncoding, ByteStreams}
 import com.typesafe.config.{Config, ConfigException, ConfigFactory, ConfigParseOptions}
 import com.typesafe.scalalogging.LazyLogging
+import kokellab.utils.core.exceptions.MultipleElementsException
+
+import scala.util.matching.Regex
 
 package object core extends LazyLogging {
 
@@ -29,6 +32,11 @@ package object core extends LazyLogging {
 		case e: ConfigException.Missing => None
 	}
 
+	object RegexUtils {
+		implicit class RichRegex(val underlying: Regex) extends AnyVal {
+			def matches(s: String) = underlying.pattern.matcher(s).matches
+		}
+	}
 
 	/** Logs an error message for any exception, then rethrows. */
 	def withLoggedError[T](errorMessage: String, fn: () => T): T = withLoggedError(fn, errorMessage) // helpful for long functions
@@ -42,6 +50,10 @@ package object core extends LazyLogging {
 				throw e
 		}
 
+	def only[A](a: Seq[A]) =
+		if (a.size == 1) a.head
+		else if (a.isEmpty) throw new NoSuchElementException("The sequence is empty")
+		else throw new MultipleElementsException(s"Multiple elements in sequence of length ${a.length}")
 
 	val sha1 = MessageDigest.getInstance("SHA-1")
 	def bytesToHash(bytes: Traversable[Byte]): Array[Byte] = sha1.digest(bytes.toArray)

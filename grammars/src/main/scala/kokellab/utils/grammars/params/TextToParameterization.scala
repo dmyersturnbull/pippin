@@ -9,9 +9,9 @@ class TextToParameterizationExpression(message: String, verboseMessage: Option[S
 /**
   * This weird code parses a block of text into a map of substitutions. The format (ignoring whitespace) is:
   * <code>
-  *     $abc = "xyz"
-  *     $def = ["x", "y", "z"]
-  *     $ghi = [
+  *     \$abc = "xyz"
+  *     \$def = ["x", "y", "z"]
+  *     \$ghi = [
   *     "x"
   *     "y"
   *     "z"
@@ -58,10 +58,10 @@ class TextToParameterization(
 						assert(lengths contains param.name, s"Length is missing for parameter $param")
 						if (lengths(param.name) != zs.length) throw new TextToParameterizationExpression(s"The parameter ${param.name} has length ${lengths(param.name)}, but the value '$value' has length ${zs.length}")
 						if (!(zs forall (z => pattern.matcher(z).matches))) throw new TextToParameterizationExpression(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
-						DollarSignSub(param, zs.toList, true)
+						DollarSignSub(param, zs.toList)
 					} else {
 						if (!pattern.matcher(value).matches()) throw new TextToParameterizationExpression(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
-						DollarSignSub(param, List(quoteIfNeeded(value)), false)
+						DollarSignSub(param, List(quoteIfNeeded(value)))
 					}
 				}
 			}
