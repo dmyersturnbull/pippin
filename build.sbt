@@ -30,7 +30,7 @@ lazy val commonSettings = Seq(
 		"com.jsuereth" %% "scala-arm" % "2.0",
 		"com.google.guava" % "guava" % "23.5-jre",
 		"com.google.code.findbugs" % "jsr305" % "3.0.1", // to work around compiler warnings about missing annotations from Guava
-		"org.slf4j" % "slf4j-api" % "1.8.0-beta0",
+		"org.slf4j" % "slf4j-api" % "1.7.25",
 		"com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
 		"ch.qos.logback" %  "logback-classic" % "1.2.3",
 		"org.scalatest" %% "scalatest" % "3.0.4" % "test",
