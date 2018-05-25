@@ -52,7 +52,9 @@ class TextToParameterization(
 					else None
 				} else Some{
 					val param = params.find(p => p.name == key).get
-					if (param.isList) {
+					if (param.isList && (value startsWith "/") && (value endsWith "/")) {
+						DollarSignSub(param, List(value))
+					} else if (param.isList) {
 						if (!(value startsWith "[") || !(value endsWith "]")) throw new TextToParameterizationExpression(s"The parameter ${param.name} is a list type, but '$value' is not enclosed in []")
 						val zs = value.substring(1, value.length - 1) split "," map (_.trim) map quoteIfNeeded
 						assert(lengths contains param.name, s"Length is missing for parameter $param")
@@ -60,7 +62,7 @@ class TextToParameterization(
 						if (!(zs forall (z => pattern.matcher(z).matches))) throw new TextToParameterizationExpression(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
 						DollarSignSub(param, zs.toList)
 					} else {
-						if (!pattern.matcher(value).matches()) throw new TextToParameterizationExpression(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
+						//if (!pattern.matcher(value).matches()) throw new TextToParameterizationExpression(s"The value '$value' does not match the required pattern ${pattern.pattern} (for parameter ${param.name}")
 						DollarSignSub(param, List(quoteIfNeeded(value)))
 					}
 				}
