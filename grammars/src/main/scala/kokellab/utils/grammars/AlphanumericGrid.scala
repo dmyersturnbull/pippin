@@ -93,4 +93,8 @@ trait PointLike {
 	def index: Int
 	def name: String
 	override def toString: String = s"($row, $column)[i=$index]"
+	override def equals(o: Any): Boolean = o match {
+	    case v: PointLike => v.row == row && v.column == column && v.index == index && v.name == name
+	    case _ => false
+	}
 }

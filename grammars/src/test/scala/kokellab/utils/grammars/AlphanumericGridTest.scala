@@ -5,6 +5,15 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 
 class AlphanumericGridTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
 
+	property("Point equality") {
+	      val grid1 = AlphanumericGrid(4, 6)
+	      val grid2 = AlphanumericGrid(4, 6)
+	      val grid3 = AlphanumericGrid(9, 9)
+	      grid1.Point(1, 1) should equal (grid2.Point(1, 1))
+	      grid1.Point(1, 2) should not equal (grid2.Point(1, 1))
+	      grid1.Point(1, 1) should equal (grid3.Point(1, 1))
+	}
+
 	property("Index, rows, and columns") {
 		val grid = AlphanumericGrid(4, 6)
 		import grid.Point
