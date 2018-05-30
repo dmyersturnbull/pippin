@@ -6,12 +6,22 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 class AlphanumericGridTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
 
 	property("Point equality") {
-	      val grid1 = AlphanumericGrid(4, 6)
-	      val grid2 = AlphanumericGrid(4, 6)
-	      val grid3 = AlphanumericGrid(9, 9)
-	      grid1.Point(1, 1) should equal (grid2.Point(1, 1))
-	      grid1.Point(1, 2) should not equal (grid2.Point(1, 1))
-	      grid1.Point(1, 1) should equal (grid3.Point(1, 1))
+		val grid1 = AlphanumericGrid(4, 6)
+		val grid2 = AlphanumericGrid(4, 6)
+		val grid3 = AlphanumericGrid(9, 9)
+		grid1.Point(1, 1) should equal (grid2.Point(1, 1))
+		grid1.Point(1, 2) should not equal (grid2.Point(1, 1))
+		grid1.Point(1, 1) should equal (grid3.Point(1, 1))
+	}
+
+	property("Point hash code") {
+		val grid1 = AlphanumericGrid(4, 6)
+		val grid2 = AlphanumericGrid(4, 6)
+		val grid3 = AlphanumericGrid(9, 9)
+		Set[PointLike](grid1.Point(1, 1)) contains grid1.Point(1, 1) should be (true)
+		Set[PointLike](grid1.Point(1, 1)) contains grid2.Point(1, 1) should be (true)
+		Set[PointLike](grid1.Point(1, 1)) contains grid2.Point(1, 2) should be (false)
+		Set[PointLike](grid1.Point(1, 1)) contains grid3.Point(1, 1) should be (true) // unfortunate, but that's what we're stuck with
 	}
 
 	property("Index, rows, and columns") {

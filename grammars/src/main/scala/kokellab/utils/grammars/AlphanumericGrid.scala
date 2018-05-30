@@ -1,6 +1,8 @@
 package kokellab.utils.grammars
 
 import java.util.regex.Pattern
+//import com.google.common.base.Objects
+import java.util.Objects
 
 
 class GridException(message: String) extends GrammarException(message)
@@ -93,8 +95,10 @@ trait PointLike {
 	def index: Int
 	def name: String
 	override def toString: String = s"($row, $column)[i=$index]"
+	override def hashCode: Int = Objects.hashCode(row, column, index, name)
+	def canEqual(o: Any): Boolean = o.isInstanceOf[PointLike]
 	override def equals(o: Any): Boolean = o match {
-	    case v: PointLike => v.row == row && v.column == column && v.index == index && v.name == name
-	    case _ => false
+		case v: PointLike => (v canEqual this) && v.row == row && v.column == column && v.index == index && v.name == name
+		case _ => false
 	}
 }
