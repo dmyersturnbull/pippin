@@ -30,6 +30,10 @@ class TimeSeriesGrammarTest extends PropSpec with TableDrivenPropertyChecks with
 		TimeSeriesGrammar.build[Double]("3+$t/2", 0, 5, d=>d, rb).toSeq should equal (Seq(3.0, 3.5, 4.0, 4.5, 5.0))
 	}
 
+	property("No space in evaluation interval") {
+		TimeSeriesGrammar.build[Double]("if0%500<250:255else:0@250", 0, 250, d=>d, rb).toSeq // no error
+	}
+
 	property(s"If-else") {
 		TimeSeriesGrammar.build[Double]("if $t<3: $t else: 100", 0, 5, d=>d, rb).toSeq should equal (Seq(0.0, 1.0, 2.0, 100.0, 100.0))
 	}
