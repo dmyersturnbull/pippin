@@ -23,7 +23,7 @@ object TimeSeriesGrammar {
 	}
 
 	// we allow a negative and decimal points in the evaluation interval to catch those errors intelligently
-	private val mainPattern = """ *(.*?) *(?: +(?:evaluate every)|@ +(\-?\d+(?:\.\d+)?))?""".r
+	private val mainPattern = """ *(.*?) *(?: *(?:evaluate every)|@ *(\-?\d+(?:\.\d+)?))?""".r
 
 	private def extract(expression: String): (String, Int) = expression match {
 		case mainPattern(value: String, interval) =>
