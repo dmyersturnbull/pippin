@@ -31,7 +31,7 @@ package object grammars {
 		def apply(string: String): String = {
 			var quotedWith: Option[Char] = None
 			string flatMap { c =>
-				if (isWhitespace(c) && quotedWith.isEmpty) Seq.empty else {
+				if (isWhitespace(c) && quotedWith.isEmpty) Seq.empty[Char] else {
 					if (quoteChars contains c) quotedWith = flip(quotedWith, c)
 					Seq(c)
 				}

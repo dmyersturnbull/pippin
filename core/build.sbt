@@ -1,5 +1,4 @@
-name := "skale-core"
+name := "took-core"
 libraryDependencies ++= Seq(
-	"org.scala-lang.modules" %% "scala-xml" % "1.1.0",
-	"com.github.tototoshi" %% "scala-csv" % "1.3.5"
+	"com.github.tototoshi" %% "scala-csv" % "1.3.6"
 ) map (_.exclude("xml-apis", "xml-apis"))

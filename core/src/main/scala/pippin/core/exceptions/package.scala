@@ -8,5 +8,4 @@ package object exceptions {
 
 	class ServiceFailedException(message: String, cause: Throwable = null, serviceOutput: Option[String] = None) extends Exception(message, cause)
 
-
 }

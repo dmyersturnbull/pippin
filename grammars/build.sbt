@@ -1,6 +1,6 @@
-name := "skale-grammars"
+name := "took-grammars"
 libraryDependencies ++= Seq(
-	"org.scalanlp" %% "breeze" % "1.0-RC2",
-	"org.parboiled" %% "parboiled" % "2.1.4",
-	"org.typelevel"  %% "squants"  % "1.3.0"
+	"org.scalanlp" %% "breeze" % "1.0",
+	"org.parboiled" %% "parboiled" % "2.2.0",
+	"org.typelevel"  %% "squants"  % "1.6.0"
 )

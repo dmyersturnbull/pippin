@@ -54,13 +54,12 @@ class SecureRandom extends java.security.SecureRandom {
 	  *  @param  length    the desired length of the String
 	  *  @return           the String
 	  */
-	def nextString(length: Int) = {
+	def nextString(length: Int): String = {
 		def safeChar() = {
 			val surrogateStart: Int = 0xD800
 			val res = nextInt(surrogateStart - 1) + 1
 			res.toChar
 		}
-
 		List.fill(length)(safeChar()).mkString
 	}
 
@@ -77,18 +76,15 @@ class SecureRandom extends java.security.SecureRandom {
 	  */
 	def shuffle[T, CC[X] <: TraversableOnce[X]](xs: CC[T])(implicit bf: CanBuildFrom[CC[T], T, CC[T]]): CC[T] = {
 		val buf = new ArrayBuffer[T] ++= xs
-
-		def swap(i1: Int, i2: Int) {
+		def swap(i1: Int, i2: Int): Unit = {
 			val tmp = buf(i1)
 			buf(i1) = buf(i2)
 			buf(i2) = tmp
 		}
-
 		for (n <- buf.length to 2 by -1) {
 			val k = nextInt(n)
 			swap(n - 1, k)
 		}
-
 		(bf(xs) ++= buf).result()
 	}
 
@@ -100,7 +96,6 @@ class SecureRandom extends java.security.SecureRandom {
 			val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 			chars charAt (this nextInt chars.length)
 		}
-
 		Stream continually nextAlphaNum
 	}
 
