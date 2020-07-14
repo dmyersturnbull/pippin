@@ -1,6 +1,6 @@
-package kokellab.utils.grammars.params
+package pippin.grammars.params
 
-import kokellab.utils.grammars.{GrammarException, GridRangeGrammar, PointLike}
+import pippin.grammars.{GrammarException, GridRangeGrammar, PointLike}
 
 trait Parameterizer
 

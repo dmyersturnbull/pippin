@@ -1,4 +1,4 @@
-package kokellab.utils.grammars.squints
+package pippin.grammars.squints
 
 import squants.MetricSystem
 
@@ -39,10 +39,10 @@ object SiPrefix {
 	def between(start: String, end: String): List[SiPrefix] = between(bothToPrefix(start), bothToPrefix(end))
 
 	def between(start: SiPrefix, end: SiPrefix): List[SiPrefix] =
-		prefixes slice (prefixes indexOf start, (prefixes indexOf end) + 1)
+		prefixes.slice(prefixes indexOf start, (prefixes indexOf end) + 1)
 
 	def between(startLogLevel: Int, endLogLevel: Int): List[SiPrefix] =
-		prefixes slice (10 + startLogLevel, 10 + endLogLevel)
+		prefixes.slice(10 + startLogLevel, 10 + endLogLevel)
 
 	def byLogLevel(log: Byte) = prefixes(10 + log)
 

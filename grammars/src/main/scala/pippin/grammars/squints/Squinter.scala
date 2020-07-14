@@ -1,9 +1,10 @@
-package kokellab.utils.grammars.squints
+package pippin.grammars.squints
 
 import java.util.regex.Pattern
 
-import kokellab.utils.grammars.GrammarException
+import pippin.grammars.GrammarException
 import squants.mass.SubstanceConcentration
+import java.math.BigDecimal
 import squants.time.Time
 import squants.{Dimension, Quantity}
 
@@ -26,7 +27,7 @@ class Squinter[A <: Quantity[A]](
 		parser: String => Try[A],
 		allowedUnits: Set[String],
 		numberParser: String => Double = _.toDouble,
-		defaultUnit: String = "",
+		defaultUnit: Option[String] = None,
 		numberPattern: String = Squinter.doublePattern,
 		siPrefixes: List[SiPrefix] = SiPrefix.prefixes
 ) extends (String => A) {
@@ -36,7 +37,13 @@ class Squinter[A <: Quantity[A]](
 	private val pattern = ("(" + numberPattern + ") *([" + (prefixMap.keys mkString "|") + "]?)((?:" + (allowedUnits mkString "|") + ")?)").r
 
 	override def apply(s: String): A = {
-		val united = if (allowedUnits exists (u => s endsWith u)) s else s + " " + defaultUnit
+		val united = {
+			if (allowedUnits exists (u => s endsWith u)) {
+				s
+			} else {
+				defaultUnit.map(u => s + " " + u).getOrElse(throw new SiPrefixException(s"Could not parse expression $s (no units specified)"))
+			}
+		}
 		united match {
 			case pattern(amount: String, prefix: String, unit: String) =>
 				val value: Double = (prefixMap get prefix map (d => d.factor * amount.toDouble)) getOrElse amount.toDouble
@@ -62,13 +69,13 @@ object Squinter {
 	/**
 	  * Allows integral seconds, minutes, and hours, allowing milli and kilo, and assuming millseconds if no units are given.
 	  */
-	lazy val milliseconds: Squinter[Time] = new Squinter(Time.apply(_), Set("s", "m", "h"), numberParser = _.toInt, defaultUnit = "ms", numberPattern = nonnegativeDoublePattern,
+	lazy val milliseconds: Squinter[Time] = new Squinter(Time.apply(_), Set("s", "m", "h"), numberParser = _.toInt, defaultUnit = Some("ms"), numberPattern = nonnegativeDoublePattern,
 		siPrefixes = List(SiPrefix.milli, SiPrefix.kilo))
 
 	/**
 	  * Allows molar units (M or mol/L) nano, micro, and milli, assuming micromolars if no units are given.
 	  */
-	lazy val micromolars: Squinter[SubstanceConcentration] = new Squinter(SubstanceConcentration.apply(_), Set("M", "mol/L"), numberParser = _.toDouble, defaultUnit = "µM", numberPattern = nonnegativeDoublePattern,
+	lazy val micromolars: Squinter[SubstanceConcentration] = new Squinter(SubstanceConcentration.apply(_), Set("M", "mol/L"), numberParser = _.toDouble, defaultUnit = Some("µM"), numberPattern = nonnegativeDoublePattern,
 		siPrefixes = SiPrefix.between("nano", "milli"))
 
 }

@@ -1,9 +1,13 @@
-package kokellab.utils.grammars
+package pippin.grammars
 
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.propspec.AnyPropSpec
 
-class IfElseIntegerTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
+class IfElseIntegerTest extends AnyPropSpec with TableDrivenPropertyChecks with Matchers {
 
 	property(s"If-elif-else") {
 		IfElseIntegerGrammar.eval("if 0=5: 1 elif 12%5=2: 2 else: 3") should equal (Some(2))

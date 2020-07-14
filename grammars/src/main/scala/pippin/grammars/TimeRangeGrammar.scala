@@ -1,6 +1,6 @@
-package kokellab.utils.grammars
+package pippin.grammars
 
-import kokellab.utils.grammars.squints.{SiPrefix, Squinter}
+import pippin.grammars.squints.{SiPrefix, Squinter}
 import squants.time.Time
 
 object TimeRangeGrammar {
@@ -21,7 +21,7 @@ class TimeRangeGrammar(converter: Time => Long, units: Set[String], siPrefixes: 
 		Time.apply(_),
 		units,
 		numberParser = _.toLong,
-		defaultUnit = "ms",
+		defaultUnit = defaultUnit,
 		numberPattern = Squinter.nonnegativeDoublePattern,
 		siPrefixes = List(SiPrefix.milli, SiPrefix.kilo)
 	)

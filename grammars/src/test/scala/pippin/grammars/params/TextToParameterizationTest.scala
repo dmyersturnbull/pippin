@@ -1,10 +1,14 @@
-package kokellab.utils.grammars.params
+package pippin.grammars.params
 
-import kokellab.utils.grammars.IfElseIntegerGrammar
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest.propspec.AnyPropSpec
 
-class TextToParameterizationTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
+
+class TextToParameterizationTest extends AnyPropSpec with TableDrivenPropertyChecks with Matchers {
 
 	property(s"Parse") {
 		val results = new TextToParameterization().parse(

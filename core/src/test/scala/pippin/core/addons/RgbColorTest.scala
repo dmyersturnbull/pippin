@@ -1,11 +1,18 @@
-package kokellab.utils.core.addons
+package pippin.core.addons
 
 import org.scalacheck.Gen
-import org.scalatest.prop.{GeneratorDrivenPropertyChecks, TableDrivenPropertyChecks}
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.propspec.AnyPropSpec
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+
+import scala.collection.immutable.ListMap
 
 
-class RgbColorTest extends PropSpec with GeneratorDrivenPropertyChecks with TableDrivenPropertyChecks with Matchers {
+class RgbColorTest extends AnyPropSpec with TableDrivenPropertyChecks with ScalaCheckDrivenPropertyChecks with Matchers {
 
 	val gen = Gen.listOfN(6, Gen.frequency((10, Gen.numChar), (6, Gen.oneOf('A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f')))) map (_.mkString)
 	val things = Table("0000ff", "0000ff")

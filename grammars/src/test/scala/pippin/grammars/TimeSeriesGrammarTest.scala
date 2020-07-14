@@ -1,9 +1,13 @@
-package kokellab.utils.grammars
+package pippin.grammars
 
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.propspec.AnyPropSpec
 
-class TimeSeriesGrammarTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
+class TimeSeriesGrammarTest extends AnyPropSpec with TableDrivenPropertyChecks with Matchers {
 
 	import scala.reflect.runtime.universe._
 	import scala.reflect._
@@ -14,56 +18,56 @@ class TimeSeriesGrammarTest extends PropSpec with TableDrivenPropertyChecks with
 
 	property(s"Empty") {
 		a [GrammarException] should be thrownBy {
-			TimeSeriesGrammar.build[Double]("", 0, 5, d => d, rb).toSeq should equal(Seq(5, 5, 5, 5, 5))
+			TimeSeriesGrammar.build[Double]("", 0, 5, d => d, rb).iterator.toSeq should equal(Seq(5, 5, 5, 5, 5))
 		}
 	}
 
 	property(s"Constant") {
-		TimeSeriesGrammar.build[Double]("5", 0, 5, d=>d, rb).toSeq should equal (Seq(5, 5, 5, 5, 5))
+		TimeSeriesGrammar.build[Double]("5", 0, 5, d=>d, rb).iterator.toSeq should equal (Seq(5, 5, 5, 5, 5))
 	}
 
 	property(s"Just t") {
-		TimeSeriesGrammar.build[Double]("$t", 0, 5, d=>d, rb).toSeq should equal (Seq(0.0, 1.0, 2.0, 3.0, 4.0))
+		TimeSeriesGrammar.build[Double]("$t", 0, 5, d=>d, rb).iterator.toSeq should equal (Seq(0.0, 1.0, 2.0, 3.0, 4.0))
 	}
 
 	property(s"Simple") {
-		TimeSeriesGrammar.build[Double]("3+$t/2", 0, 5, d=>d, rb).toSeq should equal (Seq(3.0, 3.5, 4.0, 4.5, 5.0))
+		TimeSeriesGrammar.build[Double]("3+$t/2", 0, 5, d=>d, rb).iterator.toSeq should equal (Seq(3.0, 3.5, 4.0, 4.5, 5.0))
 	}
 
 	property("No space in evaluation interval") {
-		TimeSeriesGrammar.build[Double]("if0%500<250:255else:0@250", 0, 250, d=>d, rb).toSeq // no error
+		TimeSeriesGrammar.build[Double]("if0%500<250:255else:0@250", 0, 250, d=>d, rb).iterator.toSeq // no error
 	}
 
 	property(s"If-else") {
-		TimeSeriesGrammar.build[Double]("if $t<3: $t else: 100", 0, 5, d=>d, rb).toSeq should equal (Seq(0.0, 1.0, 2.0, 100.0, 100.0))
+		TimeSeriesGrammar.build[Double]("if $t<3: $t else: 100", 0, 5, d=>d, rb).iterator.toSeq should equal (Seq(0.0, 1.0, 2.0, 100.0, 100.0))
 	}
 
 	property(s"Array access") {
-		TimeSeriesGrammar.build[Double]("if $t=0: 1 else: $t[0]+1", 0, 5, d=>d, rb).toSeq should equal (Seq(1.0, 2.0, 2.0, 2.0, 2.0))
+		TimeSeriesGrammar.build[Double]("if $t=0: 1 else: $t[0]+1", 0, 5, d=>d, rb).iterator.toSeq should equal (Seq(1.0, 2.0, 2.0, 2.0, 2.0))
 	}
 
 	property(s"Weird array access") {
-		TimeSeriesGrammar.build[Double]("$t + $t[5]", 0, 10, d=>d, rb).toSeq should equal (Seq(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 11.0, 12.0, 13.0, 14.0))
+		TimeSeriesGrammar.build[Double]("$t + $t[5]", 0, 10, d=>d, rb).iterator.toSeq should equal (Seq(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 11.0, 12.0, 13.0, 14.0))
 	}
 
 	property(s"Expression in array access") {
-		TimeSeriesGrammar.build[Double]("if $t>0: $t + $t[$t-1] else: 0", 0, 10, d=>d, rb).toSeq should equal (Seq(0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0, 45.0))
+		TimeSeriesGrammar.build[Double]("if $t>0: $t + $t[$t-1] else: 0", 0, 10, d=>d, rb).iterator.toSeq should equal (Seq(0.0, 1.0, 3.0, 6.0, 10.0, 15.0, 21.0, 28.0, 36.0, 45.0))
 	}
 
 	property(s"Expression in array access with evaluation interval") {
-		TimeSeriesGrammar.build[Double]("if $t>5: $t + $t[$t-6] else: 0  @ 5", 0, 40, d=>d, rb).toSeq should equal (Seq(0.0, 0.0, 10.0, 15.0, 30.0, 40.0, 60.0, 75.0))
+		TimeSeriesGrammar.build[Double]("if $t>5: $t + $t[$t-6] else: 0  @ 5", 0, 40, d=>d, rb).iterator.toSeq should equal (Seq(0.0, 0.0, 10.0, 15.0, 30.0, 40.0, 60.0, 75.0))
 	}
 
 	property(s"Bug #41") {
 		// the evaluation interval is exactly equal to the end, which is okay
-		TimeSeriesGrammar.build[Double]("if $t=0: 127 else: $t[$t-1] @ 9", 0, 9, d => d, rb).toSeq
+		TimeSeriesGrammar.build[Double]("if $t=0: 127 else: $t[$t-1] @ 9", 0, 9, d => d, rb).iterator.toSeq
 		// the interval is greater than the stop
 		a [EvaluationIntervalException] should be thrownBy {
-			TimeSeriesGrammar.build[Double]("if $t=0: 127 else: $t[$t-1] @ 10", 0, 9, d => d, rb).toSeq
+			TimeSeriesGrammar.build[Double]("if $t=0: 127 else: $t[$t-1] @ 10", 0, 9, d => d, rb).iterator.toSeq
 		}
 		// now let's start a bit later
 		a [EvaluationIntervalException] should be thrownBy {
-			TimeSeriesGrammar.build[Double]("if $t=0: 127 else: $t[$t-1] @ 9", 5, 9, d => d, rb).toSeq
+			TimeSeriesGrammar.build[Double]("if $t=0: 127 else: $t[$t-1] @ 9", 5, 9, d => d, rb).iterator.toSeq
 		}
 	}
 
@@ -71,7 +75,7 @@ class TimeSeriesGrammarTest extends PropSpec with TableDrivenPropertyChecks with
 	  * Not manually verified, but the result should always be the same for seed=1.
 	  */
 	property(s"Stabilized Brownian motion") {
-		val z = TimeSeriesGrammar.build[Double]("$t[$t-1] + normR(0, 20) / pow($t+1, 1.5)", 0, 50, d=>d, rb, outOfBoundsValue = 0).toSeq
+		val z = TimeSeriesGrammar.build[Double]("$t[$t-1] + normR(0, 20) / pow($t+1, 1.5)", 0, 50, d=>d, rb, outOfBoundsValue = 0).iterator.toSeq
 		z.last should equal (2.9539912532197454)
 	}
 
@@ -80,40 +84,40 @@ class TimeSeriesGrammarTest extends PropSpec with TableDrivenPropertyChecks with
 	}
 
 	property(s"Using integers") {
-		TimeSeriesGrammar.build[Int]("if $t>0: $t[$t-1]+2", 0, 6, d=>d.toInt, rb).toSeq should equal (Seq(0, 2, 4, 6, 8, 10))
+		TimeSeriesGrammar.build[Int]("if $t>0: $t[$t-1]+2", 0, 6, d=>d.toInt, rb).iterator.toSeq should equal (Seq(0, 2, 4, 6, 8, 10))
 	}
 
 	property(s"Out-of-bounds") {
-		assert(TimeSeriesGrammar.build[Double]("$t[$t-2]", 0, 5, d=>d, rb).toSeq forall (_.isNaN))
+		assert(TimeSeriesGrammar.build[Double]("$t[$t-2]", 0, 5, d=>d, rb).iterator.toSeq forall (_.isNaN))
 	}
 
 	property(s"Out-of-bounds with integers") {
 		// this is weird behavior, but let's at least be consistent about it
 		// Scala converts NaN to 0 with .toInt
-		TimeSeriesGrammar.build[Int]("$t[$t-2]", 0, 5, d=>d.toInt, rb).toSeq should equal (Seq(0, 0, 0, 0, 0))
+		TimeSeriesGrammar.build[Int]("$t[$t-2]", 0, 5, d=>d.toInt, rb).iterator.toSeq should equal (Seq(0, 0, 0, 0, 0))
 	}
 
 	property(s"Negative and fractional evaluation intervals") {
 		a [EvaluationIntervalException] should be thrownBy {
-			val results = TimeSeriesGrammar.build[Double]("5 @ -1", 0, 5, d=>d, rb).toSeq
+			val results = TimeSeriesGrammar.build[Double]("5 @ -1", 0, 5, d=>d, rb).iterator.toSeq
 			System.err.println(results)
 		}
 		a [EvaluationIntervalException] should be thrownBy {
-			val results = TimeSeriesGrammar.build[Double]("5 @ 1.0", 0, 5, d=>d, rb).toSeq
+			val results = TimeSeriesGrammar.build[Double]("5 @ 1.0", 0, 5, d=>d, rb).iterator.toSeq
 			System.err.println(results)
 		}
 	}
 
 	property(s"Evaluation interval with modulo") {
-		TimeSeriesGrammar.build[Double]("$t%2 @ 1", 0, 5, d=>d, rb).toSeq should equal (Seq(0.0, 1.0, 0.0, 1.0, 0.0))
-		TimeSeriesGrammar.build[Double]("$t%2 @ 2", 0, 5, d=>d, rb).toSeq should equal (Seq(0.0, 0.0, 0.0, 0.0, 0.0))
-		TimeSeriesGrammar.build[Double]("$t%6 @ 3", 0, 5, d=>d, rb).toSeq should equal (Seq(0.0, 0.0, 0.0, 3.0, 3.0))
+		TimeSeriesGrammar.build[Double]("$t%2 @ 1", 0, 5, d=>d, rb).iterator.toSeq should equal (Seq(0.0, 1.0, 0.0, 1.0, 0.0))
+		TimeSeriesGrammar.build[Double]("$t%2 @ 2", 0, 5, d=>d, rb).iterator.toSeq should equal (Seq(0.0, 0.0, 0.0, 0.0, 0.0))
+		TimeSeriesGrammar.build[Double]("$t%6 @ 3", 0, 5, d=>d, rb).iterator.toSeq should equal (Seq(0.0, 0.0, 0.0, 3.0, 3.0))
 		a [EvaluationIntervalException] should be thrownBy {
-			val results = TimeSeriesGrammar.build[Double]("$t%2 @ 3", 0, 5, d=>d, rb).toSeq
+			val results = TimeSeriesGrammar.build[Double]("$t%2 @ 3", 0, 5, d=>d, rb).iterator.toSeq
 			System.err.println(results)
 		}
 		a [EvaluationIntervalException] should be thrownBy {
-			val results = TimeSeriesGrammar.build[Double]("$t%3 @ 6", 0, 5, d=>d, rb).toSeq
+			val results = TimeSeriesGrammar.build[Double]("$t%3 @ 6", 0, 5, d=>d, rb).iterator.toSeq
 			System.err.println(results)
 		}
 	}

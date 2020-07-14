@@ -32,6 +32,7 @@ lazy val commonSettings = Seq(
 		"org.scalatest" %% "scalatest" % "3.2.0" % "test",
 		"org.scalactic" %% "scalactic" % "3.2.0" % "test",
 		"org.scalacheck" %% "scalacheck" % "1.14.3" % "test",
+		"org.scalatestplus" %% "scalacheck-1-14" % "3.2.0.0" % "test"
 	),
 	pomExtra :=
 		<issueManagement>

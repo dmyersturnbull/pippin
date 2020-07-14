@@ -1,4 +1,4 @@
-package kokellab.utils.core.addons
+package pippin.core.addons
 
 import java.io.InputStreamReader
 import java.nio.file.{Files, Path, Paths}
@@ -27,12 +27,12 @@ object TextUtils {
 	/**
 	 * Streams a text file, gunzipping if the filename ends with ".gz".
 	 */
-	def streamLines(path: String): TraversableOnce[String] = streamLines(Paths.get(path), "UTF8")
-	def streamLines(path: String, encoding: String): TraversableOnce[String] = streamLines(Paths.get(path), encoding)
-	def streamLines(path: Path): TraversableOnce[String] = streamLines(path, "UTF8")
-	def streamLines(path: Path, encoding: String): TraversableOnce[String] = {
+	def streamLines(path: String): IterableOnce[String] = streamLines(Paths.get(path), "UTF8")
+	def streamLines(path: String, encoding: String): IterableOnce[String] = streamLines(Paths.get(path), encoding)
+	def streamLines(path: Path): IterableOnce[String] = streamLines(path, "UTF8")
+	def streamLines(path: Path, encoding: String): IterableOnce[String] = {
 		val is = if (path endsWith ".gz") new GZIPInputStream(Files.newInputStream(path)) else Files.newInputStream(path)
-		Source.fromInputStream(is, encoding).getLines
+		Source.fromInputStream(is, encoding).getLines()
 		//Source.fromInputStream(is, encoding) withClose (() => is.close()) getLines()
 	}
 

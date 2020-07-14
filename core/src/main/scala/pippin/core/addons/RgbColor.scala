@@ -1,4 +1,4 @@
-package kokellab.utils.core.addons
+package pippin.core.addons
 
 /**
 	* A representation of an RGB color convertible between a 6-digit hex representation and unsigned short values for red, green, and blue.

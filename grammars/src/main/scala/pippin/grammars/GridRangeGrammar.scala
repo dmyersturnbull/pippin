@@ -1,11 +1,11 @@
-package kokellab.utils.grammars
+package pippin.grammars
 
 import org.parboiled2._
 
 
 object GridRangeGrammar {
 	def eval(input: String, nRows: Int, nColumns: Int): Seq[PointLike] = {
-		val parser = new GridRangeGrammar(input.toUpperCase.replaceAllLiterally(" ", ""), AlphanumericGrid(nRows, nColumns))
+		val parser = new GridRangeGrammar(input.toUpperCase.replace(" ", ""), AlphanumericGrid(nRows, nColumns))
 		try {
 			parser.run().get
 		} catch {

@@ -1,10 +1,16 @@
-package kokellab.utils.grammars.params
+package pippin.grammars.params
 
-import kokellab.utils.grammars.{AlphanumericGrid, IfElseIntegerGrammar, PointLike}
+import pippin.grammars.{AlphanumericGrid, IfElseIntegerGrammar, PointLike}
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest.propspec.AnyPropSpec
+import org.scalactic.TolerantNumerics
 
-class ParameterizationsTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
+
+class ParameterizationsTest extends AnyPropSpec with TableDrivenPropertyChecks with Matchers {
 
 	property(s"Parameterize grid") {
 		val parameterizer = new GridParameterizer()

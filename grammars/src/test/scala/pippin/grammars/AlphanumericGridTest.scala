@@ -1,9 +1,13 @@
-package kokellab.utils.grammars
+package pippin.grammars
 
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.propspec.AnyPropSpec
 
-class AlphanumericGridTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
+class AlphanumericGridTest extends AnyPropSpec with TableDrivenPropertyChecks with Matchers {
 
 	property("Point equality") {
 		val grid1 = AlphanumericGrid(4, 6)

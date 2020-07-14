@@ -1,4 +1,4 @@
-package kokellab.utils.grammars
+package pippin.grammars
 
 import breeze.stats.distributions.RandBasis
 
@@ -17,7 +17,7 @@ object TimeSeriesGrammar {
 			randBasis: Option[RandBasis] = None,
 			defaultValue: Double = 0, outOfBoundsValue: Double = Double.NaN,
 			tolerance: Double = BooleanRealNumberGrammar.DEFAULT_TOLERANCE
-	): TraversableOnce[A] = {
+	): IterableOnce[A] = {
 		val (value, interval) = extract(expression)
 		new TimeSeriesGrammar(value, start, stop, converter, randBasis, interval, defaultValue, outOfBoundsValue = outOfBoundsValue, tolerance = tolerance).build()
 	}
@@ -88,7 +88,7 @@ class TimeSeriesGrammar[@specialized(Float, Double, Byte, Short, Int) A : ClassT
 
 	private val simpleReplacer = (i: Int) => tPattern.replaceAllIn(expression, i.toString)
 
-	def build(): TraversableOnce[A] = {
+	def build(): IterableOnce[A] = {
 
 		if (Try(converter(expression.toDouble)).isSuccess) {
 			Iterator.fill[A](stop - start)(converter(expression.toDouble))
@@ -125,7 +125,7 @@ class TimeSeriesGrammar[@specialized(Float, Double, Byte, Short, Int) A : ClassT
 		values
 	}
 
-	private def buildStreaming(): TraversableOnce[A] = {
+	private def buildStreaming(): IterableOnce[A] = {
 
 		val replacer = simpleReplacer
 

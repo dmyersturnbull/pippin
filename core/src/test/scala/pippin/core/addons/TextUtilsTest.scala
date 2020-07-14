@@ -1,9 +1,15 @@
-package kokellab.utils.core.addons
+package pippin.core.addons
 
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.propspec.AnyPropSpec
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import scala.collection.immutable.ListMap
 
-class TextUtilsTest extends PropSpec with GeneratorDrivenPropertyChecks with Matchers {
+
+class TextUtilsTest extends AnyPropSpec with ScalaCheckDrivenPropertyChecks with Matchers {
 
 	property("signByte can be out of range") {
 		assertThrows[NumberFormatException] {

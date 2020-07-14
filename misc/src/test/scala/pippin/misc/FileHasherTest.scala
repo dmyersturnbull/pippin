@@ -1,16 +1,18 @@
-package kokellab.utils.misc
+package pippin.misc
 
 import java.io.ByteArrayInputStream
 import java.nio.file.Paths
 
 import org.scalacheck.Arbitrary
 import org.scalacheck.Gen
-import org.scalatest.prop.{GeneratorDrivenPropertyChecks, PropertyChecks}
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.propspec.AnyPropSpec
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
-import scala.io.Source
-
-class FileHasherTest extends PropSpec with GeneratorDrivenPropertyChecks with Matchers {
+class FileHasherTest extends AnyPropSpec with ScalaCheckDrivenPropertyChecks with Matchers {
 
 	val hasher = new FileHasher("SHA-256")
 	println(hasher.hash("aef46c1e5d854fcfd20ab427b599c86102b2fc6252fcdfe9be84dafdb58d6ffb".getBytes()))

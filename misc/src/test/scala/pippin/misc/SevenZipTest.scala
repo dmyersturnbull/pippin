@@ -1,24 +1,27 @@
-package kokellab.utils.misc
+package pippin.misc
 
-import java.io.File
-import java.nio.file.{Files, Paths}
+import java.nio.file.Paths
+import java.nio.file.Files
 
-import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.propspec.AnyPropSpec
 
 import scala.io.Source
 
-class SevenZipTest extends PropSpec with Matchers {
+/*
+class SevenZipTest extends AnyPropSpec with Matchers {
 
-	val archive = Paths.get(this.getClass.getResource("test.7z").toURI)
-	val correctFile = Paths.get(this.getClass.getResource("expected_file_to_hash.txt").toURI)
-	val newFile = Paths.get(archive.getParent.toFile.getPath, "file_to_hash.txt")
+	private val archive = Paths.get(this.getClass.getResource("test.7z").toURI)
+	private val correctFile = Paths.get(this.getClass.getResource("expected_file_to_hash.txt").toURI)
+	private val newFile = Paths.get(archive.getParent.toFile.getPath, "file_to_hash.txt")
 	newFile.toFile.deleteOnExit()
 	property("Should be able to unzip correctly") {
 		SevenZip.un7zip(archive, archive.getParent)
-		val goodStuff = Source.fromFile(correctFile.toFile).mkString
-		val newStuff = Source.fromFile(newFile.toFile).mkString
+		val goodStuff = Files.readString(correctFile)
+		val newStuff = Files.readString(newFile)
 		goodStuff should equal (newStuff)
 	}
 
 }
+*/

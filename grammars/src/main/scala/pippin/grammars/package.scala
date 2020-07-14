@@ -1,4 +1,4 @@
-package kokellab.utils
+package pippin
 
 import breeze.stats.distributions.{RandBasis, ThreadLocalRandomGenerator}
 import org.apache.commons.math3.random.MersenneTwister
@@ -30,12 +30,13 @@ package object grammars {
 	class Dewhitespacer(quoteChars: Set[Char] = Set('"'), isWhitespace: Char => Boolean = _.isWhitespace) {
 		def apply(string: String): String = {
 			var quotedWith: Option[Char] = None
-			string flatMap { c =>
+			val seq: Seq[Char] = string flatMap { c =>
 				if (isWhitespace(c) && quotedWith.isEmpty) Seq.empty[Char] else {
 					if (quoteChars contains c) quotedWith = flip(quotedWith, c)
 					Seq(c)
 				}
 			}
+			seq.mkString
 		}
 		private def flip(q: Option[Char], c: Char): Option[Char] =
 			if (q.isEmpty) Some(c)

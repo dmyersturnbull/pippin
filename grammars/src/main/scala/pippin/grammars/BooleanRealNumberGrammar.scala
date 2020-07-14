@@ -1,4 +1,4 @@
-package kokellab.utils.grammars
+package pippin.grammars
 
 import breeze.stats.distributions.RandBasis
 import org.parboiled2._

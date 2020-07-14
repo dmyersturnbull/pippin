@@ -1,9 +1,13 @@
-package kokellab.utils.grammars
+package pippin.grammars
 
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.propspec.AnyPropSpec
 
-class TimeRangeGrammarTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
+class TimeRangeGrammarTest extends AnyPropSpec with TableDrivenPropertyChecks with Matchers {
 
 	property(s"Split range") {
 		TimeRangeGrammar.evalMillis("3ms - 5m") should equal ((3,300000))

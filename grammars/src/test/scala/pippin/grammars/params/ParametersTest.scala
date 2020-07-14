@@ -1,10 +1,14 @@
-package kokellab.utils.grammars.params
+package pippin.grammars.params
 
-import kokellab.utils.grammars.IfElseIntegerGrammar
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest.propspec.AnyPropSpec
 
-class ParametersTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
+
+class ParametersTest extends AnyPropSpec with TableDrivenPropertyChecks with Matchers {
 
 	val p1 = DollarSignParam("$abc", false)
 	val x1 = Map(p1 -> DollarSignSub(p1, List("50")))

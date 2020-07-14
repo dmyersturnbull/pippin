@@ -1,9 +1,13 @@
-package kokellab.utils.grammars
+package pippin.grammars
 
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.propspec.AnyPropSpec
 
-class IfElseRealNumberGrammarTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
+class IfElseRealNumberGrammarTest extends AnyPropSpec with TableDrivenPropertyChecks with Matchers {
 
 	property(s"If only") {
 		IfElseRealNumberGrammar.eval("if 50>5: 0") should equal (Some(0))

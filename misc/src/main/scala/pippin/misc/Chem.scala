@@ -1,11 +1,10 @@
-package kokellab.utils.chem
+package pippin.chem
 
 import org.openscience.cdk.DefaultChemObjectBuilder
 import org.openscience.cdk.inchi.{InChIToStructure, InChIGeneratorFactory}
 import org.openscience.cdk.interfaces.{IAtomContainer, ITetrahedralChirality}
 import org.openscience.cdk.smiles._
 import org.openscience.cdk.silent.SilentChemObjectBuilder
-import scala.collection.JavaConversions._
 
 object Chem {
 
@@ -34,7 +33,7 @@ object Chem {
 	def connectivity(inchikey: String) = (inchikey split '-').head
 
 	def nDefinedSterocenters(molecule: IAtomContainer): Int =
-		molecule.stereoElements.toList count (_.isInstanceOf[ITetrahedralChirality])
+		List(molecule.stereoElements) count (_.isInstanceOf[ITetrahedralChirality])
 
 }
 

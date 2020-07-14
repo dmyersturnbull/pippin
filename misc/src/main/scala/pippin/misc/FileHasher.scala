@@ -1,11 +1,11 @@
-package kokellab.utils.misc
+package pippin.misc
 
 import java.io.InputStream
 import java.nio.file.{Files, Path}
 import java.security.MessageDigest
-import kokellab.utils.core._
+import pippin.core._
 
-import kokellab.utils.core.{bytesToHex, hexToBytes}
+import pippin.core.{bytesToHex, hexToBytes}
 
 class FileHasher(algorithm: String = "SHA-256") {
 
@@ -19,7 +19,7 @@ class FileHasher(algorithm: String = "SHA-256") {
 		val actual = hash(stream)
 		if (actual != hashHex) throw new ValidationFailedException(s"Validation failed: Required $hashHex but got $actual")
 	}
-	def validate(bytes: TraversableOnce[Byte], hashHex: String): Unit = {
+	def validate(bytes: IterableOnce[Byte], hashHex: String): Unit = {
 		val actual = hash(bytes)
 		if (actual != hashHex) throw new ValidationFailedException(s"Validation failed: Required $hashHex but got $actual")
 	}
@@ -36,9 +36,9 @@ class FileHasher(algorithm: String = "SHA-256") {
 		bytesToHex(md.digest())
 	}
 
-	def hash(bytes: TraversableOnce[Byte]): String = {
+	def hash(bytes: IterableOnce[Byte]): String = {
 		val md = MessageDigest.getInstance(algorithm)
-		md.update(bytes.toArray)
+		md.update(bytes.iterator.toArray)
 		bytesToHex(md.digest())
 	}
 

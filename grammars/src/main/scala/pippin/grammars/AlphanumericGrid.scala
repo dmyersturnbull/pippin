@@ -1,4 +1,4 @@
-package kokellab.utils.grammars
+package pippin.grammars
 
 import java.util.regex.Pattern
 //import com.google.common.base.Objects
@@ -70,7 +70,7 @@ case class AlphanumericGrid(nRows: Int, nColumns: Int) extends GridLike {
 		def this(s: String) = this(stringToRow(s), stringToColumn(s))
 		def this(i: Int) = this((i-1) / nColumns + 1, (i-1) % nColumns + 1)
 		val index = nColumns*(row-1) + column
-		override val name: String = (row + 'A' - 1).toChar + column.toString
+		override val name: String = (row + 'A' - 1).toChar.toString + column.toString
 	}
 
 	private val pattern = Pattern.compile("([A-Z]+)([0-9]+)")

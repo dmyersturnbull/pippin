@@ -1,9 +1,13 @@
-package kokellab.utils.grammars
+package pippin.grammars
 
-import org.scalatest.{FunSuite, Matchers, PropSpec}
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.propspec.AnyPropSpec
 
-class packageTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
+class packageTest extends AnyPropSpec with TableDrivenPropertyChecks with Matchers {
 
 	property("dewhitespacer, only double quotes") {
 		val de = new Dewhitespacer()

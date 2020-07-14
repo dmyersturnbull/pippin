@@ -1,4 +1,4 @@
-package kokellab.utils.grammars
+package pippin.grammars
 
 import scala.collection.immutable.{ListMap, ListSet}
 
@@ -25,19 +25,19 @@ import scala.collection.immutable.{ListMap, ListSet}
   */
 trait Transliteration {
 
-	final def apply(expression: String): String =  replacements.foldLeft(expression) ((e, s) => e.replaceAllLiterally(s._1, s._2))
+	final def apply(expression: String): String =  replacements.foldLeft(expression) ((e, s) => e.replace(s._1, s._2))
 
 	val replacements: ListMap[String, String]
 
 	/**
 	  * <strong>Excludes keys from self-referential mappings (a→a).</strong>
 	  */
-	final def keys: ListSet[String] = (ListSet.newBuilder[String] ++= (this.replacements filter (kv => kv._1 != kv._2)).keys).result
+	final def keys: ListSet[String] = (ListSet.newBuilder[String] ++= (this.replacements filter (kv => kv._1 != kv._2)).keys).result()
 
 	/**
 	  * <strong>Excludes values of self-referential mappings (a→a).</strong>
 	  */
-	final def values: ListSet[String] = (ListSet.newBuilder[String] ++= (this.replacements filter (kv => kv._1 != kv._2)).values).result
+	final def values: ListSet[String] = (ListSet.newBuilder[String] ++= (this.replacements filter (kv => kv._1 != kv._2)).values).result()
 
 	/**
 	  * @return (substring, string) pairs of the keys where the substring appears <em>before</em> the enclosing string
@@ -102,7 +102,7 @@ trait Transliteration {
 	override def equals(obj: scala.Any): Boolean =
 		obj.isInstanceOf[Transliteration] && obj.asInstanceOf[Transliteration].replacements == this.replacements
 
-	override def toString: String = s"Transliteration(${this.replacements.mkString(",").replaceAllLiterally(" ", "")})"
+	override def toString: String = s"Transliteration(${this.replacements.mkString(",").replace(" ", "")})"
 }
 
 class MathTransliteration extends Transliteration {

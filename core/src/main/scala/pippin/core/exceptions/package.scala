@@ -1,4 +1,4 @@
-package kokellab.utils.core
+package pippin.core
 
 package object exceptions {
 

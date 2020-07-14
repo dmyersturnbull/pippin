@@ -1,16 +1,16 @@
-package kokellab.utils.misc
+package pippin.misc
 
 import java.io.FileOutputStream
 import java.nio.file.{Path, Paths}
 
 import sys.process._
 import com.typesafe.scalalogging.LazyLogging
-import kokellab.utils.core.exceptions.ServiceFailedException
+import pippin.core.exceptions.ServiceFailedException
 
 import scala.util.{Failure, Success, Try}
 
 
-object SevenZipCommandLine extends LazyLogging {
+object SevenZip extends LazyLogging {
 	def un7zip(path: Path, writePath: Path, command: String = "7za"): Try[String] = {
 		val os  = new java.io.ByteArrayOutputStream
 		val code = (s"$command x $path -o$writePath" #> os) !

@@ -1,13 +1,18 @@
-package kokellab.utils.misc
+package pippin.misc
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 
 import com.google.zxing.BarcodeFormat
 import org.scalacheck.Gen
-import org.scalatest.prop.{GeneratorDrivenPropertyChecks, PropertyChecks}
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.propspec.AnyPropSpec
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import scala.collection.immutable.ListMap
 
-class BarcoderTest extends PropSpec with GeneratorDrivenPropertyChecks with Matchers {
+class BarcoderTest extends AnyPropSpec with ScalaCheckDrivenPropertyChecks with Matchers {
 
 		def fakeEncodeDecode(text: String, barcodeFormat: BarcodeFormat, dimensions: (Int, Int), imageFormat: String): String =
 			if (text.isEmpty) text else encodeDecode(text.toUpperCase, barcodeFormat, dimensions, imageFormat)
@@ -27,7 +32,7 @@ class BarcoderTest extends PropSpec with GeneratorDrivenPropertyChecks with Matc
 		}
 
 		val imageFormatGen = Gen.oneOf("png", "jpg", "gif")
-		def test(barcodeFormat: BarcodeFormat, dimensionsGen: Gen[(Int, Int)], stringGen: Gen[String]) = {
+		def test(barcodeFormat: BarcodeFormat, dimensionsGen: Gen[(Int, Int)], stringGen: Gen[String]): Unit = {
 			property(s"Decoding an encoded string should yield the original string for ${barcodeFormat.name} codes") {
 				forAll(imageFormatGen, stringGen, dimensionsGen) { (imageFormat: String, text: String, dimensions: (Int, Int)) =>
 					fakeEncodeDecode(text, barcodeFormat, dimensions, imageFormat) should equal (text.toUpperCase)

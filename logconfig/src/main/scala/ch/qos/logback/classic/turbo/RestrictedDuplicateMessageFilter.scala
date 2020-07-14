@@ -33,12 +33,12 @@ class RestrictedDuplicateMessageFilter(@BeanProperty var packagesAlwaysAllowed: 
 		}
 	}
 
-	override def start() {
+	override def start(): Unit = {
 		msgCache = new LRUMessageCache(cacheSize)
 		super.start()
 	}
 
-	override def stop() {
+	override def stop(): Unit = {
 		msgCache.clear()
 		msgCache = null
 		super.stop()

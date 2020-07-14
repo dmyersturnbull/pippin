@@ -1,11 +1,13 @@
-package kokellab.utils.grammars
+package pippin.grammars
 
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.prop.Tables.Table
-import org.scalactic.TolerantNumerics
+import org.scalatest.propspec.AnyPropSpec
 
-class GridRangeGrammarTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
+class GridRangeGrammarTest extends AnyPropSpec with TableDrivenPropertyChecks with Matchers {
 
 	property(s"Only one") {
 		val parser = new GridRangeGrammar("A1", AlphanumericGrid(5, 6))

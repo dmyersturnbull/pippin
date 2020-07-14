@@ -35,20 +35,19 @@ OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY TH
 
  */
 
-package kokellab.utils.core.addons
+package pippin.core.addons
 
 import scala.language.higherKinds
-import scala.collection.generic.CanBuildFrom
-import scala.collection.immutable.{List, Stream}
+import scala.collection.immutable.List
 import scala.collection.mutable.ArrayBuffer
 
 
 class SecureRandom extends java.security.SecureRandom {
 
-	/** Returns a pseudorandomly generated String.  This routine does
+	/** Returns a pseudorandomly generated String. This routine does
 	  *  not take any measures to preserve the randomness of the distribution
 	  *  in the face of factors like unicode's variable-length encoding,
-	  *  so please don't use this for anything important.  It's primarily
+	  *  so please don't use this for anything important. It's primarily
 	  *  intended for generating test data.
 	  *
 	  *  @param  length    the desired length of the String
@@ -74,7 +73,7 @@ class SecureRandom extends java.security.SecureRandom {
 	  *
 	  *  @return         the shuffled collection
 	  */
-	def shuffle[T, CC[X] <: TraversableOnce[X]](xs: CC[T])(implicit bf: CanBuildFrom[CC[T], T, CC[T]]): CC[T] = {
+	def shuffle[T](xs: Seq[T]): Seq[T] = {
 		val buf = new ArrayBuffer[T] ++= xs
 		def swap(i1: Int, i2: Int): Unit = {
 			val tmp = buf(i1)
@@ -85,21 +84,21 @@ class SecureRandom extends java.security.SecureRandom {
 			val k = nextInt(n)
 			swap(n - 1, k)
 		}
-		(bf(xs) ++= buf).result()
+		Seq.empty ++ buf
 	}
 
-	/** Returns a Stream of pseudorandomly chosen alphanumeric characters,
+	/** Returns a LazyList of pseudorandomly chosen alphanumeric characters,
 	  *  equally chosen from A-Z, a-z, and 0-9.
 	  */
-	def alphanumeric: Stream[Char] = {
+	def alphanumeric: LazyList[Char] = {
 		def nextAlphaNum: Char = {
 			val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 			chars charAt (this nextInt chars.length)
 		}
-		Stream continually nextAlphaNum
+		LazyList continually nextAlphaNum
 	}
 
-	def nextHexadecimal: Stream[Char] = {
+	def nextHexadecimal: LazyList[Char] = {
 		alphanumeric filter (c => c.isDigit || (Set('a', 'c', 'b', 'd', 'e', 'f') contains c))
 	}
 

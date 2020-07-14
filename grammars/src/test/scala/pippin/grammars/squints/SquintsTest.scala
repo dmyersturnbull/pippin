@@ -1,14 +1,19 @@
-package kokellab.utils.grammars.squints
+package pippin.grammars.squints
 
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.time.Millisecond
-import org.scalatest.{Matchers, PropSpec}
 import squants.MetricSystem
 import squants.mass.{ChemicalAmount, Molars, Moles, SubstanceConcentration}
 import squants.space.Inches
 import squants.time.{Hours, Milliseconds, Seconds, Time}
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.propspec.AnyPropSpec
 
-class SquintsTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
+class SquintsTest extends AnyPropSpec with TableDrivenPropertyChecks with Matchers {
 
 	property(s"Molarity") {
 		val squinter = new Squinter(SubstanceConcentration.apply(_), Set("M", "mol/L"))
@@ -23,7 +28,7 @@ class SquintsTest extends PropSpec with TableDrivenPropertyChecks with Matchers 
 	}
 
 	property("Time without a prefix or units") {
-		val squinter: Squinter[Time] = new Squinter(Time.apply(_), Set("s", "m", "h"), numberParser = _.toInt, defaultUnit = "ms", numberPattern = Squinter.nonnegativeDoublePattern,
+		val squinter: Squinter[Time] = new Squinter(Time.apply(_), Set("s", "m", "h"), numberParser = _.toInt, defaultUnit = Some("ms"), numberPattern = Squinter.nonnegativeDoublePattern,
 			siPrefixes = List(SiPrefix.milli, SiPrefix.kilo))
 		squinter("7s") should equal (Seconds(7))
 		squinter("7 s") should equal (Seconds(7))

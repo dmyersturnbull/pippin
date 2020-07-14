@@ -1,7 +1,8 @@
-package kokellab.utils
+package pippin
 
 import sys.process._
 import java.io.InputStream
+import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.nio.file.{Files, Path, Paths}
 import java.security.MessageDigest
@@ -13,7 +14,7 @@ import com.google.common.cache.CacheBuilder
 import com.google.common.io.{BaseEncoding, ByteStreams}
 import com.typesafe.config.{Config, ConfigException, ConfigFactory, ConfigParseOptions}
 import com.typesafe.scalalogging.LazyLogging
-import kokellab.utils.core.exceptions.MultipleElementsException
+import pippin.core.exceptions.MultipleElementsException
 
 import scala.util.matching.Regex
 
@@ -56,30 +57,30 @@ package object core extends LazyLogging {
 		else throw new MultipleElementsException(s"Multiple elements in sequence of length ${a.length}")
 
 	val sha1 = MessageDigest.getInstance("SHA-1")
-	def bytesToHash(bytes: Traversable[Byte]): Array[Byte] = sha1.digest(bytes.toArray)
+	def bytesToHash(bytes: Iterable[Byte]): Array[Byte] = sha1.digest(bytes.toArray)
 	def blobToBytes(blob: Blob): Array[Byte] = ByteStreams.toByteArray(blob.getBinaryStream)
-	def bytesToHex(bytes: Traversable[Byte]) = BaseEncoding.base16().lowerCase.encode(bytes.toArray)
+	def bytesToHex(bytes: Iterable[Byte]) = BaseEncoding.base16().lowerCase.encode(bytes.toArray)
 	def blobToHex(blob: Blob) = BaseEncoding.base16().lowerCase().encode(blobToBytes(blob))
-	def bytesToBlob(bytes: Traversable[Byte]): Blob = new SerialBlob(bytes.toArray)
-	def bytesToHashBlob(bytes: Traversable[Byte]): Blob = bytesToBlob(bytesToHash(bytes))
-	def bytesToHashHex(bytes: Traversable[Byte]) = bytesToHex(bytesToHash(bytes))
+	def bytesToBlob(bytes: Iterable[Byte]): Blob = new SerialBlob(bytes.toArray)
+	def bytesToHashBlob(bytes: Iterable[Byte]): Blob = bytesToBlob(bytesToHash(bytes))
+	def bytesToHashHex(bytes: Iterable[Byte]) = bytesToHex(bytesToHash(bytes))
 
 	def hexToBytes(hex: String): Array[Byte] =
-		hex.sliding(2, 2).toArray.map(Integer.parseInt(_, 16).toByte)
+		new BigInteger(hex, 16).toByteArray()
 
-	def floatsToBytes(values: Traversable[Float]): Traversable[Byte] =
+	def floatsToBytes(values: Iterable[Float]): Iterable[Byte] =
 		values flatMap (value => ByteBuffer.allocate(4).putFloat(value).array())
 
-	def doublesToBytes(values: Traversable[Double]): Traversable[Byte] =
+	def doublesToBytes(values: Iterable[Double]): Iterable[Byte] =
 		values flatMap (value => ByteBuffer.allocate(8).putDouble(value).array())
 
-	def intsToBytes(values: Traversable[Int]): Traversable[Byte] =
+	def intsToBytes(values: Iterable[Int]): Iterable[Byte] =
 		values flatMap (value => ByteBuffer.allocate(4).putInt(value).array())
 
-	def shortsToBytes(values: Traversable[Short]): Traversable[Byte] =
+	def shortsToBytes(values: Iterable[Short]): Iterable[Byte] =
 		values flatMap (value => ByteBuffer.allocate(2).putShort(value).array())
 
-	def longsToBytes(values: Traversable[Long]): Traversable[Byte] =
+	def longsToBytes(values: Iterable[Long]): Iterable[Byte] =
 		values flatMap (value => ByteBuffer.allocate(8).putLong(value).array())
 
 	/**

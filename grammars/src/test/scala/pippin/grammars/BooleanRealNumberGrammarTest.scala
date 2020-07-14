@@ -1,11 +1,14 @@
-package kokellab.utils.grammars
+package pippin.grammars
 
-import org.scalatest.{Matchers, PropSpec}
+import org.scalatest._
+import flatspec._
+import matchers._
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.prop.Tables.Table
+import org.scalatest.propspec.AnyPropSpec
 import org.scalactic.TolerantNumerics
 
-class BooleanExpressionTest extends PropSpec with TableDrivenPropertyChecks with Matchers {
+class BooleanRealNumberGrammarTest extends AnyPropSpec with TableDrivenPropertyChecks with Matchers {
 
 	val doubleEq = TolerantNumerics.tolerantDoubleEquality(1e-4f)
 

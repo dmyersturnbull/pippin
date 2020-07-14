@@ -1,4 +1,4 @@
-package kokellab.utils.misc
+package pippin.misc
 
 import java.io.{FileOutputStream, OutputStream, FileInputStream}
 import java.nio.file.Path
@@ -23,11 +23,11 @@ class Barcoder(val barcodeFormat: BarcodeFormat, val imageFormat: String, val wi
 		new MultiFormatReader().decode(bitmap).getText
 	}
 
-	def encode(text: String, path: Path) {
+	def encode(text: String, path: Path): Unit = {
 		encode(text, new FileOutputStream(path.toFile))
 	}
 
-	def encode(text: String, stream: OutputStream) = {
+	def encode(text: String, stream: OutputStream): Unit = {
 		val matrix = new MultiFormatWriter().encode(text, barcodeFormat, width, height, null)
 		MatrixToImageWriter.writeToStream(matrix, imageFormat, stream)
 	}

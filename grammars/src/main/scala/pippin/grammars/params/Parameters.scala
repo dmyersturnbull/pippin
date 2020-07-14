@@ -1,13 +1,13 @@
-package kokellab.utils.grammars.params
+package pippin.grammars.params
 
-import kokellab.utils.core
-import kokellab.utils.core.RegexUtils._
+import pippin.core
+import pippin.core.RegexUtils._
 
 
 object DollarSignParams {
 
 	def substitute(expression: String, substitutions: Map[String, String]) =
-		substitutions.foldLeft(expression)((e, s) => e.replaceAllLiterally(s._1, s._2))
+		substitutions.foldLeft(expression)((e, s) => e.replace(s._1, s._2))
 
 	def find(expression: String, predefinedNames: Set[String]): Set[DollarSignParam] = {
 		assert(predefinedNames forall (_.startsWith("$")))
