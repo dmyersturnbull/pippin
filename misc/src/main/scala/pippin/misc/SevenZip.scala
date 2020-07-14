@@ -1,6 +1,6 @@
 package pippin.misc
 
-import java.io.FileOutputStream
+import scala.language.postfixOps
 import java.nio.file.{Path, Paths}
 
 import sys.process._

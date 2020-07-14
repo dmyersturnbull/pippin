@@ -1,4 +1,4 @@
-name := "took-grammars"
+name := "pippin-grammars"
 libraryDependencies ++= Seq(
 	"org.scalanlp" %% "breeze" % "1.0",
 	"org.parboiled" %% "parboiled" % "2.2.0",

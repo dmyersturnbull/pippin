@@ -1,4 +1,4 @@
-name := "took-logconfig"
+name := "pippin-logconfig"
 
 libraryDependencies += ("ch.qos.logback" %  "logback-classic" % "1.3.0-alpha5")
 

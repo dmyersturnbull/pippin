@@ -17,7 +17,7 @@ lazy val commonSettings = Seq(
 	publishArtifact in Test := false,
 	pomIncludeRepository := { _ => false },
 	javacOptions ++= Seq("-source", "14", "-target", "14", "-Xlint:all"),
-	scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-language:postfixOps"),
+	scalacOptions ++= Seq("-unchecked", "-deprecation"),
 	testOptions in Test += Tests.Argument("-oF"),
 	homepage := Some(url("https://github.com/dmyersturnbull/pippin")),
 	licenses := Seq("Apache Software License, Version 2.0"  -> url("https://www.apache.org/licenses/LICENSE-2.0")),

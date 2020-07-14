@@ -1,4 +1,4 @@
-name := "took-misc"
+name := "pippin-misc"
 libraryDependencies ++= Seq(
 	"org.tukaani" % "xz" % "1.8",
 	"com.google.zxing" % "core" % "3.4.0",

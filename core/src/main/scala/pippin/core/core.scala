@@ -15,6 +15,7 @@ import com.google.common.io.{BaseEncoding, ByteStreams}
 import com.typesafe.config.{Config, ConfigException, ConfigFactory, ConfigParseOptions}
 import com.typesafe.scalalogging.LazyLogging
 import pippin.core.exceptions.MultipleElementsException
+import scala.language.postfixOps
 
 import scala.util.matching.Regex
 
