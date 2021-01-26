@@ -1,4 +1,4 @@
-Copyright 2017–2021 Douglas Myers-Turnbull, Cole Helsell, Chris Ki
+Copyright 2016–2021 Douglas Myers-Turnbull
 
 
                                  Apache License
