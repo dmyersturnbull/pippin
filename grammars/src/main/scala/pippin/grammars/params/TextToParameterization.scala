@@ -1,8 +1,9 @@
 package pippin.grammars.params
 
 import java.util.regex.Pattern
-
 import pippin.grammars.GrammarException
+
+import scala.collection.immutable.ArraySeq
 
 class TextToParameterizationExpression(message: String, verboseMessage: Option[String] = None, underlying: Option[Exception] = None) extends GrammarException(message, verboseMessage, underlying)
 
@@ -34,7 +35,7 @@ class TextToParameterization(
 
 		val text = multiLineArrayPattern.replaceAllIn(originalText, m => "= [" + middle(m.group(1)) + "]")
 
-		val mapped: Seq[DollarSignSub] = text.split("\n") flatMap { s =>
+		val mapped: Seq[DollarSignSub] = ArraySeq.unsafeWrapArray(text.split("\n")) flatMap { s =>
 			if (s.trim.isEmpty) None else {
 				if (!(s contains '=')) throw new TextToParameterizationExpression(s"Non-empty line $s does not contain an equals sign")
 				val key = s.substring(0, s.indexOf('=')).trim

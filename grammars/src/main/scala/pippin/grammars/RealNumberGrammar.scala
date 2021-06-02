@@ -27,7 +27,7 @@ object RealNumberGrammar {
 		"exp" -> (a => math.exp(a(0))),
 		"pow" -> (a => math.pow(a(0), a(1))),
 		"abs" -> (a => math.abs(a(0))),
-		"round" -> (a => math.round(a(0))),
+		"round" -> (a => math.round(a(0)).toDouble),
 		"ceil" -> (a => math.ceil(a(0))),
 		"floor" -> (a => math.floor(a(0))),
 		"min" -> (a => a.min),

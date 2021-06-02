@@ -20,7 +20,7 @@ class TimeRangeGrammar(converter: Time => Long, units: Set[String], siPrefixes: 
 	private lazy val squinter: Squinter[Time] = new Squinter(
 		Time.apply(_),
 		units,
-		numberParser = _.toLong,
+		numberParser = _.toDouble,
 		defaultUnit = defaultUnit,
 		numberPattern = Squinter.nonnegativeDoublePattern,
 		siPrefixes = List(SiPrefix.milli, SiPrefix.kilo)
