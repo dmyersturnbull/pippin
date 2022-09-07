@@ -1,22 +1,100 @@
-# General
+# Also see https://github.com/github/gitignore/blob/master/Python.gitignore
+# This is simpler and easier to understand
+# We'll ignore all .* files and then re-add some
+
+# General hidden or unwanted
 .*
 ~*
-*.so
+*~
+*#
+$*
+*$
+*.lnk
+*.bak
+*.swp
+*.tmp
+*.temp
+tmp/
+null
+null/
+pids
+*.pid
+*.pid.lock
+*.backup
+
+
+# Silly OS files
+Thumbs.db
+[Dd]esktop.ini
+
+# Common build dirs
+out/
+build/
+dist/
+dist-*
+
+# Log files
 *.log
+*.log.gz
+*.log.lz4
+
+# Potentially sensitive
+*.jks
+*.keystore
+google-services.json
+
+# Mutli-file archives
+*.7z
+*.bz2
 *.tar
 *.tar.gz
+*.tgz
 *.zip
-*.bz2
-cache/
-out/
-*.junk
+*.war
+*.nar
+*.ear
+*.rar
+*.jar
 
-# Database
-config/
+# Misc binary files
+*.dll
+*.so
+*.so.*
+*.dylib
+*.exe
+*.msi
+*.msix
+*.cab
+*.pkg
+*.out
+*.app
 
-# Scala and Java
-*.class
+# C/C++
+*.d
+*.o
+*.slo
+*.lo
+*.obj
+*.gch
+*.pch
+*.ko
+*.elf*.lib
+*.a
+*.la
+*.lai
+*.lib
+
+# JVM
 hs_err_pid*
+replay_pid*
+*.class
+.hprof
+*.iml
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
 
 # SBT
 dist/*
@@ -27,4 +105,27 @@ src_managed
 project/boot
 project/plugins/project
 
+# Cuda
+*.i
+*.ii
+*.gpu
+*.ptx
+*.cubin
+*.fatbin
+
+# Keep these config files
 !/.gitignore
+!/.travis.yml
+!/.circleci/config.yml
+!/.github
+!/.appveyor.yml
+!/.flake8
+!/.readthedocs.yml
+!/.dockerignore
+!/.editorconfig
+!/.pre-commit-config.yaml
+!.npmignore
+!/.scrutinizer.yml
+!/.nojekyll
+!gradle-wrapper.jar
+!gradle-wrapper.properties

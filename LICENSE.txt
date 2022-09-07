@@ -1,4 +1,4 @@
-Copyright 2016–2021 Douglas Myers-Turnbull
+Copyright 2016–2022 Douglas Myers-Turnbull
 
 
                                  Apache License
